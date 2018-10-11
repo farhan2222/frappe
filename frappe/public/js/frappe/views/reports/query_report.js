@@ -235,15 +235,22 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			filters = Object.assign(filters || {}, obj);
 		}
 
-		return new Promise(resolve => frappe.call({
-			method: 'frappe.desk.query_report.run',
-			type: 'GET',
-			args: {
-				report_name: this.report_name,
-				filters: filters,
-			},
-			callback: resolve
-		})).then(r => {
+		// only one refresh at a time
+		if (this.last_ajax) {
+			this.last_ajax.abort();
+		}
+
+		return new Promise(resolve => {
+			this.last_ajax = frappe.call({
+				method: 'frappe.desk.query_report.run',
+				type: 'GET',
+				args: {
+					report_name: this.report_name,
+					filters: filters,
+				},
+				callback: resolve
+			})
+		}).then(r => {
 			let data = r.message;
 
 			this.hide_status();
@@ -337,9 +344,10 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			data: this.data,
 			inlineFilters: true,
 			treeView: this.tree_report,
-			layout: 'fixed'
+			layout: 'fixed',
+			cellHeight: 33
 		};
-		
+
 		if (this.report_settings.get_datatable_options) {
 			datatable_options = this.report_settings.get_datatable_options(datatable_options);
 		}
