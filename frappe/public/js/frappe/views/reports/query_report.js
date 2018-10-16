@@ -169,6 +169,16 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			if (df.on_change) f.on_change = df.on_change;
 
 			df.onchange = () => {
+				if (this.previous_filters
+					&& (JSON.stringify(this.previous_filters) == JSON.stringify(this.get_filter_values()))) {
+					// filter values have not changed
+					return;
+				}
+				this.previous_filters = this.get_filter_values();
+
+				// clear previous_filters after 3 seconds, to allow refresh for new data
+				setTimeout(() => this.previous_filters = null, 3000);
+
 				if (f.on_change) {
 					f.on_change(this);
 				} else {
@@ -235,15 +245,22 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			filters = Object.assign(filters || {}, obj);
 		}
 
-		return new Promise(resolve => frappe.call({
-			method: 'frappe.desk.query_report.run',
-			type: 'GET',
-			args: {
-				report_name: this.report_name,
-				filters: filters,
-			},
-			callback: resolve
-		})).then(r => {
+		// only one refresh at a time
+		if (this.last_ajax) {
+			this.last_ajax.abort();
+		}
+
+		return new Promise(resolve => {
+			this.last_ajax = frappe.call({
+				method: 'frappe.desk.query_report.run',
+				type: 'GET',
+				args: {
+					report_name: this.report_name,
+					filters: filters,
+				},
+				callback: resolve
+			})
+		}).then(r => {
 			let data = r.message;
 
 			this.hide_status();
@@ -337,9 +354,10 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			data: this.data,
 			inlineFilters: true,
 			treeView: this.tree_report,
-			layout: 'fixed'
+			layout: 'fixed',
+			cellHeight: 33
 		};
-		
+
 		if (this.report_settings.get_datatable_options) {
 			datatable_options = this.report_settings.get_datatable_options(datatable_options);
 		}

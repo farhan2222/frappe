@@ -170,6 +170,7 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 			getEditor: this.get_editing_object.bind(this),
 			dynamicRowHeight: !this.fixed_row_height.get_value(),
 			checkboxColumn: true,
+			cellHeight: 37,
 			events: {
 				onRemoveColumn: (column) => {
 					this.remove_column_from_datatable(column);
@@ -773,8 +774,11 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 
 		const width = (docfield ? cint(docfield.width) : null) || null;
 
+		// child table column
+		const id = doctype !== this.doctype ? `${doctype}:${fieldname}` : fieldname;
+
 		return {
-			id: fieldname,
+			id: id,
 			field: fieldname,
 			name: title,
 			content: title,
