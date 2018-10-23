@@ -62,6 +62,7 @@ def prepare_options(html, options):
 		'background': None,
 		'images': None,
 		'quiet': None,
+		'disable-smart-shrinking': None,
 		# 'no-outline': None,
 		'encoding': "UTF-8",
 		#'load-error-handling': 'ignore',
