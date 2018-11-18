@@ -16,6 +16,27 @@ Table.create = (value) => {
 }
 Quill.register(Table, true);
 
+// hidden blot
+class HiddenBlock extends Block {
+	static create(value) {
+		const node = super.create(value);
+		node.setAttribute('data-comment', value);
+		node.classList.add('hidden');
+		return node;
+	}
+
+	static formats(node) {
+		return node.getAttribute('data-comment');
+	}
+}
+HiddenBlock.blotName = 'hiddenblot';
+HiddenBlock.tagName = 'DIV';
+Quill.register(HiddenBlock, true);
+
+// image uploader
+const Uploader = Quill.import('modules/uploader');
+Uploader.DEFAULTS.mimetypes.push('image/gif');
+
 // inline style
 const BackgroundStyle = Quill.import('attributors/style/background');
 const ColorStyle = Quill.import('attributors/style/color');
@@ -150,8 +171,9 @@ frappe.ui.form.ControlTextEditor = frappe.ui.form.ControlCode.extend({
 			return;
 		}
 
-		this.quill.setText('');
-		this.quill.clipboard.dangerouslyPasteHTML(0, value);
+		// set html without triggering a focus
+		const delta = this.quill.clipboard.convert({ html: value, text: '' });
+		this.quill.setContents(delta);
 	},
 
 	get_input_value() {

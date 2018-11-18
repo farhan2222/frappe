@@ -39,6 +39,7 @@ def run_background(instance):
 	create_csv_file(result['columns'], result['result'], 'Prepared Report', instance.name)
 
 	instance.status = "Completed"
+	instance.columns = json.dumps(result["columns"])
 	instance.report_end_time = frappe.utils.now()
 	instance.save()
 
@@ -73,7 +74,7 @@ def create_csv_file(columns, data, dt, dn):
 				new_row = []
 				for col in columns:
 					key = col.get('fieldname') or col.get('label')
-					new_row.append(frappe.format(row.get(key, ''), col))
+					new_row.append(row.get(key, ''))
 				rows.append(new_row)
 
 			rows = [tuple(columns_without_meta)] + rows

@@ -17,6 +17,7 @@ frappe.views.CommunicationComposer = Class.extend({
 			fields: this.get_fields(),
 			primary_action_label: __("Send"),
 			primary_action: function() {
+				me.delete_saved_draft();
 				me.send_action();
 			}
 		});
@@ -82,8 +83,7 @@ frappe.views.CommunicationComposer = Class.extend({
 				label:__("Message"),
 				fieldtype:"Text Editor", reqd: 1,
 				fieldname:"content",
-				onchange: frappe.utils.debounce(this.save_as_draft.bind(this), 300),
-				default: localStorage.getItem(this.frm.doctype + this.frm.docname) || ''
+				onchange: frappe.utils.debounce(this.save_as_draft.bind(this), 300)
 			},
 
 			{fieldtype: "Section Break"},
@@ -135,9 +135,7 @@ frappe.views.CommunicationComposer = Class.extend({
 		}
 		this.dialog.fields_dict.subject.set_value(this.subject || '');
 
-		if(!localStorage.getItem(this.frm.doctype + this.frm.docname)) {
-			this.setup_earlier_reply();
-		}
+		this.setup_earlier_reply();
 	},
 
 	setup_subject_and_recipients: function() {
@@ -509,6 +507,17 @@ frappe.views.CommunicationComposer = Class.extend({
 		}
 	},
 
+	delete_saved_draft() {
+		if (this.dialog) {
+			try {
+				localStorage.removeItem(this.frm.doctype + this.frm.docname);
+			} catch (e) {
+				console.log(e);
+				console.warn('[Communication] Cannot delete localStorage item'); // eslint-disable-line
+			}
+		}
+	},
+
 	send_email: function(btn, form_values, selected_attachments, print_html, print_format) {
 		var me = this;
 		me.dialog.hide();
@@ -570,16 +579,6 @@ frappe.views.CommunicationComposer = Class.extend({
 						cur_frm.reload_doc();
 					}
 
-					if (localStorage.getItem(this.frm.doctype + this.frm.docname)) {
-						try {
-							localStorage.removeItem(this.frm.doctype + this.frm.docname);
-						} catch (e) {
-							// silently fail
-							console.log(e);
-							console.warn('[Communication] Failed to delete draft.');
-						}
-					}
-
 					// try the success callback if it exists
 					if (me.success) {
 						try {
@@ -629,6 +628,12 @@ frappe.views.CommunicationComposer = Class.extend({
 
 		if(this.txt) {
 			this.message = this.txt + (this.message ? ("<br><br>" + this.message) : "");
+		} else {
+			// saved draft in localStorage
+			const { doctype, docname } = this.frm || {};
+			if (doctype && docname) {
+				this.message = localStorage.getItem(doctype + docname) || '';
+			}
 		}
 
 		if(this.real_name) {
@@ -650,7 +655,7 @@ frappe.views.CommunicationComposer = Class.extend({
 			var communication_date = last_email.communication_date || last_email.creation;
 			content = '<div><br></div>'
 				+ reply
-				+ "<br><!-- original-reply --><br>"
+				+ "<div data-comment='original-reply'></div>"
 				+ '<blockquote>' +
 					'<p>' + __("On {0}, {1} wrote:",
 					[frappe.datetime.global_date_format(communication_date) , last_email.sender]) + '</p>' +
