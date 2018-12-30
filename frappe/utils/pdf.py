@@ -95,7 +95,7 @@ def read_options_from_html(html):
 
 	# use regex instead of soup-parser
 	for attr in [
-		"margin-top", "margin-bottom", "margin-left", "margin-right", "header-spacing",
+		"margin-top", "margin-bottom", "margin-left", "margin-right", "header-spacing", "footer-spacing"
 		"page-size", "page-width", "page-height", "orientation"
 	]:
 		try:
