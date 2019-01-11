@@ -244,7 +244,7 @@ def get_filtered_data(ref_doctype, columns, data, user):
 
 	user_col = linked_doctypes.get("User")
 	check_owner = role_permissions.get("if_owner", {}).get("read")\
-		and user_col is not None and columns_dict[user_col] == columns_dict.get("owner")
+		and user_col is not None and columns_dict[user_col] in [columns_dict.get("owner"), columns_dict.get("salesman")]
 
 	if match_filters_per_doctype:
 		for row in data:
