@@ -1228,6 +1228,14 @@ frappe-datatable@^1.8.0:
     lodash "^4.17.5"
     sortablejs "^1.7.0"
 
+"frappe-datatable@https://github.com/SaiFi0102/datatable.git":
+  version "0.0.0-development"
+  resolved "https://github.com/SaiFi0102/datatable.git#bca0988840386f05acda889c89c67d84564f400a"
+  dependencies:
+    hyperlist "^1.0.0-beta"
+    lodash "^4.17.5"
+    sortablejs "^1.7.0"
+
 frappe-gantt@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/frappe-gantt/-/frappe-gantt-0.1.0.tgz#0532d7f10bc4c905ad7dd1ef8e65c7457d13355f"
