@@ -53,7 +53,8 @@ def get_data():
 			"_doctype": 'Communication',
 			"icon": 'fa fa-envelope-o',
 			"color": '#589494',
-			"link": 'List/Communication/Inbox'
+			"link": 'List/Communication/Inbox',
+			"hidden": 1
 		},
 		{
 			"module_name": "Core",
