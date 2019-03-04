@@ -280,6 +280,10 @@ $.extend(frappe.model, {
 		newdoc.modified_by = user;
 		newdoc.modified = '';
 
+		if (!from_amend && frappe.meta.has_field(doc.doctype, "copied_from")) {
+			newdoc.copied_from = doc.name;
+		}
+
 		return newdoc;
 	},
 
