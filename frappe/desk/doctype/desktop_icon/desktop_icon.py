@@ -113,13 +113,37 @@ def add_user_icon(_doctype, _report=None, label=None, link=None, type='link', st
 	if not link: link = 'List/{0}'.format(_doctype)
 
 	# find if a standard icon exists
-	icon_name = frappe.db.exists('Desktop Icon', {'standard': standard, 'link': link,
-		'owner': frappe.session.user})
+	icons = frappe.db.sql("""
+		select name, hidden, link, type
+		from `tabDesktop Icon`
+		where owner=%s and (link=%s or `_doctype`=%s or `_report`=%s or module_name in (%s, %s)) and standard=%s
+	""", [frappe.session.user, link, _doctype, _report, _doctype, _report, standard], as_dict=1)
 
-	if icon_name:
-		if frappe.db.get_value('Desktop Icon', icon_name, 'hidden'):
+	icon_name = None
+	if icons:
+		link_icon = filter(lambda d: d.link == link, icons)
+		report_icon = filter(lambda d: d.link == link, icons)
+		doctype_icon = filter(lambda d: d.link == link, icons)
+
+		if link_icon:
+			icon = link_icon[0]
+		elif report_icon:
+			_doctype = None
+			icon = report_icon[0]
+		elif doctype_icon:
+			icon = doctype_icon[0]
+		else:
+			icon = icons[0]
+
+		icon_name = icon.name
+
+		if icon.type != 'link' and not icon._doctype and not icon._report:
+			# if neither doctype not report
+			frappe.db.set_value('Desktop Icon', icon.name, {'hidden': 0, '_doctype': _doctype, '_report': _report}, None)
+			clear_desktop_icons_cache()
+		elif icon.hidden:
 			# if it is hidden, unhide it
-			frappe.db.set_value('Desktop Icon', icon_name, 'hidden', 0)
+			frappe.db.set_value('Desktop Icon', icon.name, 'hidden', 0)
 			clear_desktop_icons_cache()
 
 	else:
