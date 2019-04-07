@@ -251,7 +251,7 @@ frappe.views.ReportView = frappe.ui.BaseList.extend({
 		this.page.add_menu_item(__("Print"), function() {
 			frappe.ui.get_print_settings(false, function(print_settings) {
 				var title =  __(me.docname || me.doctype);
-				frappe.render_grid({grid:me.grid, title:title, print_settings:print_settings});
+				frappe.render_grid({grid:me.grid, title:title, print_settings:print_settings, report:me});
 			})
 
 		}, true);
