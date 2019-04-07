@@ -35,7 +35,7 @@
 		  {% endif %}
 
 		  <div class="print-format {% if landscape %} landscape {% endif %}"
-				{% if columns.length > 20 %}
+				{% if !template && columns.length > 20 %}
 					style="font-size: 4.0pt"
 				{% endif %}
 			>

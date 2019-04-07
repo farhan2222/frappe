@@ -897,7 +897,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	get_data_for_print() {
-		const indices = this.datatable.datamanager.getFilteredRowIndices();
+		const indices = this.datatable.datamanager.rowViewOrder.filter(index => {
+			return this.datatable.bodyRenderer.visibleRowIndices.includes(index);
+		});
 		return indices.map(i => this.data[i]);
 	}
 
