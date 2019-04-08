@@ -812,7 +812,8 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			print_css: print_css,
 			print_settings: print_settings,
 			landscape: landscape,
-			columns: columns
+			columns: columns,
+			template: custom_format
 		});
 
 		frappe.render_pdf(html, print_settings);
@@ -916,7 +917,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			}, {});
 			rows.push(totalRow);
 		}
-		
+
 		return rows;
 	}
 
@@ -1027,20 +1028,14 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			</div>`);
 			this.page.footer.before(this.$tree_footer);
 		}
-		this.$tree_footer.find('[data-action=collapse_all_rows]').show();
-		this.$tree_footer.find('[data-action=expand_all_rows]').hide();
 	}
 
 	expand_all_rows() {
-		this.$tree_footer.find('[data-action=expand_all_rows]').hide();
 		this.datatable.rowmanager.expandAllNodes();
-		this.$tree_footer.find('[data-action=collapse_all_rows]').show();
 	}
 
 	collapse_all_rows() {
-		this.$tree_footer.find('[data-action=collapse_all_rows]').hide();
 		this.datatable.rowmanager.collapseAllNodes();
-		this.$tree_footer.find('[data-action=expand_all_rows]').show();
 	}
 
 	message_div(message) {
