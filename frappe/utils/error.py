@@ -208,6 +208,7 @@ def get_frame_locals():
 	_locals = ['Locals (most recent call last):']
 	for frame, filename, lineno, function, __, __ in frames:
 		if '/apps/' in filename:
-			_locals.append('File "{}", line {}, in {}\n{}'.format(filename, lineno, function, json.dumps(frame.f_locals, default=str, indent=4)))
+
+			_locals.append('File "{}", line {}, in {}\n{}'.format(filename, lineno, function, json.dumps(frame.f_locals, default=str, indent=4, skipkeys=1)))
 
 	return '\n'.join(_locals)
