@@ -436,7 +436,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		this.columns = this.prepare_columns(data.columns);
 		this.data = this.prepare_data(data.result);
 		this.linked_doctypes = this.get_linked_doctypes();
-		this.tree_report = this.data.some(d => 'indent' in d);
+		this.tree_report = this.data.some(d => 'indent' in d) || this.data.some(d => '_isGroup' in d && 'totals' in d);
 	}
 
 	render_datatable() {
@@ -700,7 +700,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	prepare_data(data) {
-		return data.map(row => {
+		let res = data.map(row => {
 			let row_obj = {};
 			if (Array.isArray(row)) {
 				this.columns.forEach((column, i) => {
@@ -711,6 +711,11 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			}
 			return row;
 		});
+
+		if (this.raw_data.add_total_row) {
+			res[res.length - 1].is_total_row = true;
+		}
+		return res;
 	}
 
 	get_visible_columns() {
@@ -937,6 +942,8 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				row[cell.column.id] = cell.content;
 				return row;
 			}, {});
+			totalRow.is_total_row = true;
+
 			rows.push(totalRow);
 		}
 
@@ -1210,8 +1217,6 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					${__('Collapse All')}</button>
 			</div>`);
 			this.page.footer.before(this.$tree_footer);
-			this.$tree_footer.find('[data-action=collapse_all_rows]').show();
-			this.$tree_footer.find('[data-action=expand_all_rows]').hide();
 		}
 	}
 
