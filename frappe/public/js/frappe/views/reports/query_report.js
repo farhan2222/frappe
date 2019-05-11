@@ -667,8 +667,14 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			}
 
 			const format_cell = (value, row, column, data) => {
-				return frappe.format(value, column,
+				value = frappe.format(value, column,
 					{for_print: false, always_show_decimals: true}, data);
+				if (data && data._isGroupTotal) {
+					value = $(`<span>${value}</span>`);
+					var $value = $(value).css("font-weight", "bold");
+					value = $value.wrap("<p></p>").parent().html();
+				}
+				return value;
 			};
 
 			let compareFn = null;
@@ -897,7 +903,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				}
 
 				const visible_idx = this.datatable.datamanager.getFilteredRowIndices();
-				if (visible_idx.length + 1 === this.data.length) {
+				if (visible_idx.length + 1 === this.datatable.datamanager.flatData.length) {
 					visible_idx.push(visible_idx.length);
 				}
 
@@ -936,7 +942,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			return this.datatable.bodyRenderer.visibleRowIndices.includes(index);
 		});
 
-		let rows = indices.map(i => this.data[i]);
+		let rows = indices.map(i => this.datatable.datamanager.flatData[i]);
 		if (this.raw_data.add_total_row) {
 			let totalRow = this.datatable.bodyRenderer.getTotalRow().reduce((row, cell) => {
 				row[cell.column.id] = cell.content;

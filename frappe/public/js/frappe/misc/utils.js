@@ -715,7 +715,9 @@ Object.assign(frappe.utils, {
 		let groups = [];
 
 		frappe.utils.report_printable_groups(rows, groups);
-		$.each(groups, (i, d) => print_group_function(d.rows, d.group || {}));
+		$.each(groups, (i, d) => {
+			print_group_function(d.rows, d.group || {});
+		});
 	},
 
 	deep_equal(a, b) {
