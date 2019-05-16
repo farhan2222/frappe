@@ -834,6 +834,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			filters: applied_filters,
 			data: data,
 			columns: columns,
+			print_settings: print_settings,
 			report: this
 		});
 
