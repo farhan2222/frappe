@@ -713,8 +713,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				const data = this.datatable.datamanager.getData(rowIndex);
 
 				control.set_value(value);
-				return this.set_control_value(value, column, data)
-					.then(() => this.refresh_charts());
+				return this.set_control_value(value, column, data, rowIndex);
 			},
 			getValue: () => {
 				return control.get_value();
@@ -722,9 +721,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		};
 	}
 
-	set_control_value(new_value, column, data) {
+	set_control_value(new_value, column, data, rowIndex) {
 		return new Promise((resolve, reject) => {
-			this.report_settings.onChange(new_value, column, data)
+			this.report_settings.onChange(new_value, column, data, rowIndex)
 				.then(r => {
 					if (r.message) {
 						resolve(r.message);
