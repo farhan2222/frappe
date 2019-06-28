@@ -242,7 +242,15 @@ def get_prepared_report_result(report, filters, dn="", user=None):
 		doc = frappe.get_doc("Prepared Report", dn)
 	else:
 		# Only look for completed prepared reports with given filters.
-		doc_list = frappe.get_all("Prepared Report", filters={"status": "Completed", "filters": json.dumps(filters), "owner": user})
+		doc_list = frappe.get_all("Prepared Report",
+			filters={
+				"status": "Completed",
+				"filters": json.dumps(filters),
+				"owner": user,
+				"report_name": report.report_name
+			}
+		)
+
 		if doc_list:
 			# Get latest
 			doc = frappe.get_doc("Prepared Report", doc_list[0])
@@ -255,11 +263,18 @@ def get_prepared_report_result(report, filters, dn="", user=None):
 			uncompressed_content = gzip_decompress(compressed_content)
 			data = json.loads(uncompressed_content)
 			if data:
+				columns = json.loads(doc.columns) if doc.columns else data[0]
+
+				for column in columns:
+					if isinstance(column, dict):
+						column["label"] = _(column["label"])
+
 				latest_report_data = {
-					"columns": json.loads(doc.columns) if doc.columns else data[0],
+					"columns": columns,
 					"result": data
 				}
 		except Exception:
+			frappe.log_error(frappe.get_traceback())
 			frappe.delete_doc("Prepared Report", doc.name)
 			frappe.db.commit()
 			doc = None
