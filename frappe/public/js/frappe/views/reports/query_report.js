@@ -102,7 +102,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			// different report
 			this.load_report();
 		}
-		else if (frappe.route_options){
+		else if (frappe.has_route_options()) {
 			// filters passed through routes
 			// so refresh report again
 			this.refresh_report();
@@ -350,6 +350,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 				this.render_datatable();
 			} else {
+				this.data = [];
 				this.toggle_nothing_to_show(true);
 			}
 
@@ -667,6 +668,12 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			}
 
 			const format_cell = (value, row, column, data) => {
+				if (column.isHeader && !data && this.data) {
+					// totalRow doesn't have a data object
+					// proxy it using the first data object
+					// this is needed only for currency formatting
+					data = this.data[0];
+				}
 				value = frappe.format(value, column,
 					{for_print: false, always_show_decimals: true}, data);
 				if (data && data._bold) {
@@ -691,7 +698,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 			return Object.assign(column, {
 				id: column.fieldname,
-				name: column.label,
+				name: __(column.label),
 				width: parseInt(column.width) || null,
 				editable: false,
 				compareValue: compareFn,
@@ -811,8 +818,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			print_settings: print_settings,
 			landscape: landscape,
 			filters: this.get_filter_values(),
-			data: custom_format ? this.data : this.get_data_for_print(),
+			data: this.get_data_for_print(),
 			columns: custom_format ? this.columns : this.get_columns_for_print(),
+			original_data: this.data,
 			report: this
 		});
 	}
@@ -824,7 +832,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 		const custom_format = this.report_settings.html_format || null;
 		const columns = custom_format ? this.columns : this.get_columns_for_print();
-		const data = custom_format ? this.data : this.get_data_for_print();
+		const data = this.get_data_for_print();
 		const applied_filters = this.get_filter_values();
 
 		const filters_html = this.get_filters_html_for_print();
@@ -833,6 +841,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			subtitle: filters_html,
 			filters: applied_filters,
 			data: data,
+			original_data: this.data,
 			columns: columns,
 			print_settings: print_settings,
 			report: this
@@ -1008,9 +1017,11 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 								change: () => {
 									let doctype = d.get_value('doctype');
 									frappe.model.with_doctype(doctype, () => {
-										let fields = frappe.meta.get_docfields(doctype)
+										let options = frappe.meta.get_docfields(doctype)
+											.filter(frappe.model.is_value_type)
 											.map(df => ({ label: df.label, value: df.fieldname }));
-										d.set_df_property('field', 'options', fields);
+
+										d.set_df_property('field', 'options', options);
 
 									});
 								}

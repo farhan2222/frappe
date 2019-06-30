@@ -28,7 +28,7 @@ frappe.ui.form.Timeline = class Timeline {
 			render_input: true,
 			only_input: true,
 			on_submit: (val) => {
-				val && this.insert_comment("Comment", val, this.comment_area.button);
+				strip_html(val) && this.insert_comment("Comment", val, this.comment_area.button);
 			}
 		});
 
@@ -376,7 +376,6 @@ frappe.ui.form.Timeline = class Timeline {
 					@abc with the below line of code.
 				*/
 
-				c.content_html = c.content_html.replace(/(<[a][^>]*>)/g, "");
 				// bold the @mentions
 				c.content_html = c.content_html.replace(/(@[^\s@]*)@[^\s@|<]*/g, "<b>$1</b>");
 			}
