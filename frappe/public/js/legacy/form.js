@@ -196,13 +196,8 @@ _f.Frm.prototype.watch_model_updates = function() {
 	frappe.model.on(me.doctype, "*", function(fieldname, value, doc) {
 		// set input
 		if(doc.name===me.docname) {
-			if ((value==='' || value===null) && !doc[fieldname]) {
-				// both the incoming and outgoing values are falsy
-				// the texteditor, summernote, changes nulls to empty strings on render,
-				// so ignore those changes
-			} else {
-				me.dirty();
-			}
+			me.dirty();
+
 			me.fields_dict[fieldname]
 				&& me.fields_dict[fieldname].refresh(fieldname);
 
