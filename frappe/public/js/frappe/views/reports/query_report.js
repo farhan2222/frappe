@@ -915,20 +915,19 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		}, __('Export Report: '+ this.report_name), __('Download'));
 	}
 
-	get_data_for_csv(with_indentation = false) {
-
-		const indices = this.datatable.datamanager.getFilteredRowIndices();
+	get_data_for_csv() {
+		const indices = this.datatable.bodyRenderer.visibleRowIndices;
 		const rows = indices.map(i => this.datatable.datamanager.getRow(i));
 		return rows.map(row => {
 			const standard_column_count = this.datatable.datamanager.getStandardColumnCount();
 			return row
 				.slice(standard_column_count)
 				.map((cell, i) => {
-				if (with_indentation && i === 0) {
-					return '   '.repeat(row.meta.indent) + cell.content;
-				}
-				return cell.content;
-			});
+					if (i === 0) {
+						return '   '.repeat(row.meta.indent) + (cell.content || '');
+					}
+					return cell.content || '';
+				});
 		});
 	}
 

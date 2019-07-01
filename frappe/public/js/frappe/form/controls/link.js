@@ -27,13 +27,14 @@ frappe.ui.form.ControlLink = frappe.ui.form.ControlData.extend({
 				if(me.$input.val() && me.get_options()) {
 					let doctype = me.get_options();
 					let name = me.$input.val();
+					me.$link.toggle(true);
 					me.$link_open.attr('href', frappe.utils.get_form_link(doctype, name));
 				}
 
 				if(!me.$input.val()) {
 					me.$input.val("").trigger("input");
 				}
-			}, 500);
+			}, 250);
 		});
 		this.$input.on("blur", function() {
 			// if this disappears immediately, the user's click
