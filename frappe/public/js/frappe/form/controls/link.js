@@ -13,7 +13,7 @@ frappe.ui.form.ControlLink = frappe.ui.form.ControlData.extend({
 		$('<div class="link-field ui-front" style="position: relative; line-height: 1;">\
 			<input type="text" class="input-with-feedback form-control">\
 			<span class="link-btn">\
-				<a class="btn-open no-decoration" title="' + __("Open Link") + '">\
+				<a class="btn-open no-decoration" title="' + __("Open Link") + '" tabindex="-1">\
 					<i class="octicon octicon-arrow-right"></i></a>\
 			</span>\
 		</div>').prependTo(this.input_area);
