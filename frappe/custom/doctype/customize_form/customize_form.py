@@ -171,6 +171,10 @@ class CustomizeForm(Document):
 		if self.flags.rebuild_doctype_for_global_search:
 			frappe.enqueue('frappe.utils.global_search.rebuild_for_doctype',
 				now=True, doctype=self.doc_type)
+		
+		from frappe.modules.utils import export_customizations
+
+		export_customizations("Vovali", self.doc_type, sync_on_migrate=1, with_permissions=1)
 
 	def set_property_setters(self):
 		meta = frappe.get_meta(self.doc_type)
