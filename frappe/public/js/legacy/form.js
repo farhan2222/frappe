@@ -847,6 +847,9 @@ _f.Frm.prototype.amend_doc = function() {
 		newdoc.amended_from = me.docname;
 		if(me.fields_dict && me.fields_dict['amendment_date'])
 			newdoc.amendment_date = frappe.datetime.obj_to_str(new Date());
+
+		if(me.fields_dict && me.fields_dict['set_posting_time'])
+			newdoc.set_posting_time = 1;
 	};
 	this.copy_doc(fn, 1);
 	frappe.utils.play_sound("click");
