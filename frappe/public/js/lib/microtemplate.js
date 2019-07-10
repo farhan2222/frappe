@@ -122,6 +122,7 @@ frappe.render_grid = function(opts) {
 
 	if(!w) {
 		frappe.msgprint(__("Please enable pop-ups in your browser"))
+		return;
 	}
 
 	w.document.write(html);
