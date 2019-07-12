@@ -580,6 +580,7 @@ class FilterArea {
 				fieldtype: 'Data',
 				label: 'ID',
 				condition: 'like',
+				doctype: this.list_view.doctype,
 				fieldname: 'name',
 				onchange: () => this.refresh_list_view()
 			}
@@ -593,8 +594,15 @@ class FilterArea {
 			fields = fields.concat(this.list_view.custom_filter_configs);
 		}
 
-		const doctype_fields = this.list_view.meta.fields;
-
+		const doctype_fields = this.list_view.meta.fields.slice(0);
+		const child_tables = this.list_view.meta.fields.filter(df => df.fieldtype === "Table");
+		child_tables.forEach(df => {
+			const child_meta = frappe.get_meta(df.options);
+			if (child_meta) {
+				doctype_fields.push(...child_meta.fields);
+			}
+		});
+		
 		fields = fields.concat(doctype_fields.filter(
 			df => df.in_standard_filter &&
 				frappe.model.is_value_type(df.fieldtype)
@@ -616,6 +624,7 @@ class FilterArea {
 			return {
 				fieldtype: fieldtype,
 				label: __(df.label),
+				doctype: df.parent,
 				options: options,
 				fieldname: df.fieldname,
 				condition: condition,
@@ -653,7 +662,7 @@ class FilterArea {
 					value = '%' + value + '%';
 				}
 				filters.push([
-					this.list_view.doctype,
+					field.df.doctype,
 					field.df.fieldname,
 					field.df.condition || '=',
 					value
