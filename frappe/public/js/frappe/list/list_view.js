@@ -289,14 +289,15 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	before_refresh() {
 		if (frappe.route_options) {
 			this.filters = this.parse_filters_from_route_options();
-
-			if (this.filters.length > 0) {
-				return this.filter_area.clear(false)
-					.then(() => this.filter_area.set(this.filters));
-			}
 		}
 
-		return Promise.resolve();
+		if (this.filters && !this.filters.length && this.doctype && frappe.get_meta(this.doctype).is_submittable) {
+			this.filters.push([this.doctype, 'docstatus', '<', 2]);
+		}
+
+		return this.filter_area.clear(false)
+			.then(() => this.filter_area.set(this.filters));
+		// return Promise.resolve();
 	}
 
 	parse_filters_from_settings() {
