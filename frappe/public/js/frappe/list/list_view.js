@@ -597,6 +597,10 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		return html;
 	}
 
+	get_count_fields() {
+		return [`count(distinct ${frappe.model.get_full_column_name('name', this.doctype)}) as total_count`];
+	}
+
 	get_count_str() {
 		const current_count = this.data.length;
 
@@ -606,7 +610,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			args: {
 				doctype: this.doctype,
 				filters: this.get_filters_for_args(),
-				fields: [`count(${frappe.model.get_full_column_name('name', this.doctype)}) as total_count`],
+				fields: this.get_count_fields(),
 			}
 		}).then(r => {
 			this.total_count = r.message.values[0][0] || current_count;
