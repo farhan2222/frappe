@@ -89,6 +89,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	load() {
+		this.page.wrapper.find(".layout-main-section-wrapper").css("margin-bottom", "5px");
+		this.page.wrapper.find(".page-body").removeClass('container').addClass('container-fluid');
+
 		if (frappe.get_route().length < 2) {
 			this.toggle_nothing_to_show(true);
 			return;
