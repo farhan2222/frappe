@@ -336,6 +336,7 @@ frappe.views.BaseList = class BaseList {
 			fields: this.get_fields(),
 			filters: this.get_filters_for_args(),
 			order_by: this.sort_selector.get_sql_string(),
+			group_by: frappe.model.get_full_column_name('name', this.doctype),
 			start: this.start,
 			page_length: this.page_length
 		};
@@ -602,7 +603,7 @@ class FilterArea {
 				doctype_fields.push(...child_meta.fields);
 			}
 		});
-		
+
 		fields = fields.concat(doctype_fields.filter(
 			df => df.in_standard_filter &&
 				frappe.model.is_value_type(df.fieldtype)
