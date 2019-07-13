@@ -71,6 +71,14 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 		});
 	}
 
+	get_args() {
+		const args = super.get_args();
+
+		return Object.assign(args, {
+			group_by: null
+		});
+	}
+
 	before_refresh() {
 		if (this.report_doc) {
 			// don't parse frappe.route_options if this is a Custom Report
@@ -150,6 +158,17 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 			return;
 		}
 		this.setup_datatable(this.data);
+	}
+
+	get_count_fields() {
+		let fields = [`count(${frappe.model.get_full_column_name('name', this.doctype)}) as total_count`];
+
+		const doctypes = this.fields.map(f => f[1])
+			.filter((v, i, a) => a.indexOf(v) === i)
+			.map(dt => frappe.model.get_full_column_name('name', dt));
+		fields.push(...doctypes);
+
+		return fields;
 	}
 
 	render_count() {
