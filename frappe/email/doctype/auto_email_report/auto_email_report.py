@@ -8,12 +8,15 @@ import calendar
 from datetime import timedelta
 
 import frappe
-from frappe import _
+from frappe import _, scrub
 from frappe.model.document import Document
 from frappe.utils import (format_time, get_link_to_form, get_url_to_report,
-	global_date_format, now, now_datetime, validate_email_add, today, add_to_date)
+	global_date_format, now, now_datetime, validate_email_add, today, add_to_date, get_html_format)
 from frappe.utils.csvutils import to_csv
 from frappe.utils.xlsxutils import make_xlsx
+from frappe.modules import get_module_path
+from frappe.desk.query_report import get_report_module_dotted_path
+import os
 
 max_reports_per_user = frappe.local.conf.max_reports_per_user or 3
 
@@ -48,7 +51,7 @@ class AutoEmailReport(Document):
 
 	def validate_report_format(self):
 		""" check if user has select correct report format """
-		valid_report_formats = ["HTML", "XLSX", "CSV"]
+		valid_report_formats = ["HTML", "XLSX", "CSV", "PDF"]
 		if self.format not in valid_report_formats:
 			frappe.throw(_("%s is not a valid report format. Report format should \
 				one of the following %s"%(frappe.bold(self.format), frappe.bold(", ".join(valid_report_formats)))))
@@ -81,6 +84,11 @@ class AutoEmailReport(Document):
 
 			return self.get_html_table(columns, data)
 
+		elif self.format == 'PDF':
+			columns, data = make_links(columns, data)
+
+			return self.get_pdf(columns, data)
+
 		elif self.format == 'XLSX':
 			spreadsheet_data = self.get_spreadsheet_data(columns, data)
 			xlsx_file = make_xlsx(spreadsheet_data, "Auto Email Report")
@@ -108,6 +116,51 @@ class AutoEmailReport(Document):
 			'report_name': self.report,
 			'edit_report_settings': get_link_to_form('Auto Email Report', self.name)
 		})
+
+	def get_pdf(self, columns=None, data=None):
+		from frappe.www.printview import get_letter_head
+
+		date_time = global_date_format(now()) + ' ' + format_time(now())
+
+		report = frappe.get_doc("Report", self.report)
+		module = report.module or frappe.db.get_value("DocType", report.ref_doctype, "module")
+		module_path = get_module_path(module)
+		# report_folder = os.path.join(module_path, "report", scrub(report.name))
+
+		print_path = os.path.join(module_path, "report", scrub(report.name), scrub(report.name) + "_jinja.html")
+		if not os.path.exists(print_path):
+			print_path = 'frappe/templates/emails/auto_email_report.html'
+		html_format = get_html_format(print_path)
+
+		method_name = get_report_module_dotted_path(module, report.name) + ".get_printable_data"
+		get_printable_data = frappe.get_attr(method_name)
+
+		if get_printable_data:
+			printable_data = get_printable_data(columns, data, frappe._dict(self.filters))
+		else:
+			printable_data = data
+
+		letter_head = frappe._dict(get_letter_head(frappe._dict(), False) or {})
+		if letter_head.content:
+			letter_head.content = frappe.utils.jinja.render_template(letter_head.content, {"doc": frappe._dict()})
+
+		if letter_head.footer:
+			letter_head.footer = frappe.utils.jinja.render_template(letter_head.footer, {"doc": frappe._dict()})
+
+		return frappe.get_print(html=frappe.render_template(html_format, {
+			'title': self.name,
+			'description': self.description,
+			'date_time': date_time,
+			'columns': columns,
+			'data': data,
+			'printable_data': printable_data,
+			'filters': self.filters,
+			'report_url': get_url_to_report(self.report, self.report_type, report.ref_doctype),
+			'report_name': self.report,
+			'edit_report_settings': get_link_to_form('Auto Email Report', self.name),
+			'print_settings': frappe.db.get_singles_dict("Print Settings"),
+			'letter_head': letter_head.content
+		}), as_pdf=True)
 
 	@staticmethod
 	def get_spreadsheet_data(columns, data):
