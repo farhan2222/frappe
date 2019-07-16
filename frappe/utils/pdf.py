@@ -67,6 +67,7 @@ def prepare_options(html, options):
 		'background': None,
 		'images': None,
 		'quiet': None,
+		'disable-smart-shrinking': None,
 		# 'no-outline': None,
 		'encoding': "UTF-8",
 		#'load-error-handling': 'ignore',
@@ -149,6 +150,7 @@ def prepare_header_footer(soup):
 			elif html_id == "footer-html":
 				options["margin-bottom"] = "15mm"
 
+	print(str(options))
 	return options
 
 def cleanup(fname, options):
