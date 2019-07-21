@@ -667,21 +667,23 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				}
 			}
 
-			const format_cell = (value, row, column, data) => {
+			const format_cell = (value, row, column, data, options) => {
 				if (column.isHeader && !data && this.data) {
 					// totalRow doesn't have a data object
 					// proxy it using the first data object
 					// this is needed only for currency formatting
 					data = this.data[0];
 				}
-				value = frappe.format(value, column,
-					{for_print: false, always_show_decimals: true}, data);
+
+				options = Object.assign({for_print: false, always_show_decimals: true}, options || {});
 				if (data && data._bold) {
-					value = $(`<span>${value}</span>`);
-					var $value = $(value).css("font-weight", "bold");
-					value = $value.wrap("<p></p>").parent().html();
+					if (!options.hasOwnProperty('style')) {
+						options.style = {};
+					}
+					options.style['font-weight'] = 'bold';
 				}
-				return value;
+
+				return frappe.format(value, column, options, data);
 			};
 
 			let compareFn = null;
