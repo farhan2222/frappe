@@ -463,7 +463,8 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				direction: frappe.utils.is_rtl() ? 'rtl' : 'ltr',
 				hooks: {
 					columnTotal: frappe.utils.report_column_total
-				}
+				},
+				getEditor: this.get_editing_object.bind(this)
 			};
 
 			if (this.report_settings.get_datatable_options) {
@@ -702,7 +703,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				id: column.fieldname,
 				name: __(column.label),
 				width: parseInt(column.width) || null,
-				editable: false,
+				editable: Boolean(column.editable),
 				compareValue: compareFn,
 				format: (value, row, column, data) => {
 					if (this.report_settings.formatter) {
@@ -712,6 +713,74 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				}
 			});
 		});
+	}
+
+	get_editing_object(colIndex, rowIndex, value, parent) {
+		const control = this.render_editing_input(colIndex, value, parent);
+		if (!control) return false;
+
+		control.df.change = () => control.set_focus();
+
+		return {
+			initValue: (value) => {
+				return control.set_value(value);
+			},
+			setValue: (value) => {
+				const column = this.datatable.getColumn(colIndex);
+				const data = this.datatable.datamanager.getData(rowIndex);
+
+				control.set_value(value);
+				return this.set_control_value(value, column, data, rowIndex);
+			},
+			getValue: () => {
+				return control.get_value();
+			}
+		};
+	}
+
+	set_control_value(new_value, column, data, rowIndex) {
+		return new Promise((resolve, reject) => {
+			this.report_settings.onChange(new_value, column, data, rowIndex)
+				.then(r => {
+					if (r.message) {
+						resolve(r.message);
+					} else {
+						reject();
+					}
+				})
+				.fail(reject);
+		});
+	}
+
+	render_editing_input(colIndex, value, parent) {
+		const col = this.datatable.getColumn(colIndex);
+		let control = null;
+
+		if (col.fieldtype === 'Text Editor') {
+			const d = new frappe.ui.Dialog({
+				title: __('Edit {0}', [col.docfield.label]),
+				fields: [col.docfield],
+				primary_action: () => {
+					this.datatable.cellmanager.submitEditing();
+					this.datatable.cellmanager.deactivateEditing();
+					d.hide();
+				}
+			});
+			d.show();
+			control = d.fields_dict[col.docfield.fieldname];
+		} else {
+			// make control
+			control = frappe.ui.form.make_control({
+				df: col,
+				parent: parent,
+				render_input: true
+			});
+			control.set_value(value);
+			control.toggle_label(false);
+			control.toggle_description(false);
+		}
+
+		return control;
 	}
 
 	prepare_data(data) {
