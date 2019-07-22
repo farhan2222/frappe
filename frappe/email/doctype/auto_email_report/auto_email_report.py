@@ -104,7 +104,7 @@ class AutoEmailReport(Document):
 		report_doctype = frappe.db.get_value('Report', self.report, 'ref_doctype')
 
 		return frappe.render_template('frappe/templates/emails/auto_email_report.html', {
-			'title': self.name,
+			'title': self.title,
 			'description': self.description,
 			'date_time': date_time,
 			'columns': columns,
@@ -145,7 +145,7 @@ class AutoEmailReport(Document):
 			letter_head.footer = frappe.utils.jinja.render_template(letter_head.footer, {"doc": frappe._dict()})
 
 		return frappe.get_print(html=frappe.render_template(html_format, {
-			'title': self.name,
+			'title': self.title,
 			'description': self.description,
 			'date_time': date_time,
 			'columns': columns,
@@ -172,7 +172,7 @@ class AutoEmailReport(Document):
 		return out
 
 	def get_file_name(self):
-		return "{0}.{1}".format(self.report.replace(" ", "-").replace("/", "-"), self.format.lower())
+		return self.title
 
 	def prepare_dynamic_filters(self):
 		self.filters = frappe.parse_json(self.filters)
@@ -214,7 +214,7 @@ class AutoEmailReport(Document):
 
 		frappe.sendmail(
 			recipients = self.email_to.split(),
-			subject = self.name,
+			subject = self.title,
 			message = message,
 			attachments = attachments,
 			reference_doctype = self.doctype,
