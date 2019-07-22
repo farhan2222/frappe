@@ -18,7 +18,7 @@
 	</tr>
 	{% endif %}
 </table>
-{% if data %}
+{% if data -%}
 <table class="table table-bordered text-medium" cellpadding="0" cellspacing="0" border="0" style="max-width: {{ max_width }}">
 	<thead>
 		<tr>
@@ -41,9 +41,8 @@
 		{% endfor %}
 	</tbody>
 </table>
-{% endif %}
-
-{% if not frappe.db.get_value("System Settings", "System Settings", "hide_footer_in_auto_email_reports")|int %}
+{%- endif %}
+{% if not frappe.db.get_value("System Settings", "System Settings", "hide_footer_in_auto_email_reports")|int -%}
 <table class="more-info" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: {{ max_width }}">
 	<tr>
 		<td>
@@ -58,4 +57,4 @@
 		</td>
 	</tr>
 </table>
-{% endif %}
+{%- endif %}

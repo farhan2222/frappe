@@ -240,11 +240,23 @@ def download(name):
 	frappe.local.response.filename = auto_email_report.get_file_name()
 
 @frappe.whitelist()
-def send_now(name):
+def send_now(names):
+	from six import string_types
+	import json
+
+	if isinstance(names, string_types):
+		names = json.loads(names)
+
+	if not isinstance(names, list):
+		names = [names]
+
 	'''Send Auto Email report now'''
-	auto_email_report = frappe.get_doc('Auto Email Report', name)
-	auto_email_report.check_permission()
-	auto_email_report.send()
+	for name in names:
+		auto_email_report = frappe.get_doc('Auto Email Report', name)
+		auto_email_report.check_permission()
+		auto_email_report.send()
+
+	frappe.msgprint(_('Scheduled to send'))
 
 def send_daily():
 	'''Check reports to be sent daily'''
