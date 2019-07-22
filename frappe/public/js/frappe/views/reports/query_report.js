@@ -1074,7 +1074,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				standard: true
 			},
 			{
-				label: __('Setup Auto Email'),
+				label: __('Auto Email List'),
 				action: () => frappe.set_route('List', 'Auto Email Report', {'report' : this.report_name}),
 				standard: true
 			},
