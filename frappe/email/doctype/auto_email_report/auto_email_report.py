@@ -172,7 +172,7 @@ class AutoEmailReport(Document):
 		return out
 
 	def get_file_name(self):
-		return self.title
+		return "{0}.{1}".format(self.title, self.format.lower())
 
 	def prepare_dynamic_filters(self):
 		self.filters = frappe.parse_json(self.filters)
