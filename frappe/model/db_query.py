@@ -347,7 +347,8 @@ class DatabaseQuery(object):
 		can_be_null = True
 
 		# prepare in condition
-		if f.operator.lower() in ('ancestors of', 'descendants of', 'not ancestors of', 'not descendants of'):
+		if f.operator.lower() in ('ancestors of', 'descendants of', 'not ancestors of', 'not descendants of',
+				'subtree of', 'not subtree of'):
 			values = f.value or ''
 
 			# TODO: handle list and tuple
@@ -361,22 +362,22 @@ class DatabaseQuery(object):
 
 			result=[]
 			lft, rgt = frappe.db.get_value(ref_doctype, f.value, ["lft", "rgt"])
-
+			lt_op, gt_op = ("<=", ">=") if f.operator.lower() in ('subtree of', 'not subtree of') else ("<", ">")
 			# Get descendants elements of a DocType with a tree structure
-			if f.operator.lower() in ('descendants of', 'not descendants of') :
+			if f.operator.lower() in ('descendants of', 'not descendants of', 'subtree of', 'not subtree of'):
 				result = frappe.db.sql_list("""select name from `tab{0}`
-					where lft>%s and rgt<%s order by lft asc""".format(ref_doctype), (lft, rgt))
+					where lft{1}%s and rgt{2}%s order by lft asc""".format(ref_doctype, gt_op, lt_op), (lft, rgt))
 			else :
 				# Get ancestor elements of a DocType with a tree structure
 				result = frappe.db.sql_list("""select name from `tab{0}`
-					where lft<%s and rgt>%s order by lft desc""".format(ref_doctype), (lft, rgt))
+					where lft{1}%s and rgt{2}%s order by lft desc""".format(ref_doctype, lt_op, gt_op), (lft, rgt))
 
 			fallback = "''"
 			value = (frappe.db.escape((v or '').strip(), percent=False) for v in result)
 			value = '("{0}")'.format('", "'.join(value))
 			# changing operator to IN as the above code fetches all the parent / child values and convert into tuple
 			# which can be directly used with IN operator to query.
-			f.operator = 'not in' if f.operator.lower() in ('not ancestors of', 'not descendants of') else 'in'
+			f.operator = 'not in' if f.operator.lower() in ('not ancestors of', 'not descendants of', 'not subtree of') else 'in'
 
 
 		elif f.operator.lower() in ('in', 'not in'):

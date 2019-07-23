@@ -612,6 +612,7 @@ class FilterArea {
 			let options = df.options;
 			let condition = '=';
 			let fieldtype = df.fieldtype;
+
 			if (['Text', 'Small Text', 'Text Editor', 'Data'].includes(fieldtype)) {
 				fieldtype = 'Data';
 				condition = 'like';
@@ -623,6 +624,10 @@ class FilterArea {
 					options = options.join("\n");
 				}
 			}
+			if (df.fieldtype === "Link" && frappe.boot.nested_set_doctypes.includes(df.options)) {
+				condition = 'subtree of';
+			}
+
 			return {
 				fieldtype: fieldtype,
 				label: __(df.label),
