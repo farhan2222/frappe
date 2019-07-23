@@ -287,17 +287,26 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	before_refresh() {
-		if (frappe.route_options) {
+		let filters_changed = false;
+
+		if (frappe.has_route_options()) {
 			this.filters = this.parse_filters_from_route_options();
+			frappe.route_options = {};
+			filters_changed = true;
 		}
 
-		if (this.filters && !this.filters.length && this.doctype && frappe.get_meta(this.doctype).is_submittable) {
+		let has_filters = (this.get_filters_for_args() || []).length || (this.filters || []).length;
+		if (!has_filters && frappe.get_meta(this.doctype).is_submittable) {
 			this.filters.push([this.doctype, 'docstatus', '<', 2]);
+			filters_changed = true;
 		}
 
-		return this.filter_area.clear(false)
+		if (filters_changed) {
+			return this.filter_area.clear(false)
 			.then(() => this.filter_area.set(this.filters));
-		// return Promise.resolve();
+		} else {
+			return Promise.resolve();
+		}
 	}
 
 	parse_filters_from_settings() {
