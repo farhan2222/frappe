@@ -33,7 +33,7 @@ frappe.ui.form.on('Auto Email Report', {
 			frm.add_custom_button(__('Send Now'), function() {
 				frappe.call({
 					method: 'frappe.email.doctype.auto_email_report.auto_email_report.send_now',
-					args: {names: frm.doc.name}
+					args: {names: [frm.doc.name]}
 				});
 			});
 		} else {
