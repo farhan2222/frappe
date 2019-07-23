@@ -27,7 +27,9 @@ frappe.ui.Filter = class {
 			["descendants of", __("Descendants Of")],
 			["not descendants of", __("Not Descendants Of")],
 			["ancestors of", __("Ancestors Of")],
-			["not ancestors of", __("Not Ancestors Of")]
+			["not ancestors of", __("Not Ancestors Of")],
+			["subtree of", __("Subtree Of")],
+			["not subtree of", __("Not Subtree Of")]
 		];
 
 		this.conditions.push(...this.nested_set_conditions);
@@ -399,7 +401,8 @@ frappe.ui.filter_utils = {
 		} else if(['Text','Small Text','Text Editor','Code','Tag','Comments',
 			'Dynamic Link','Read Only','Assign'].indexOf(df.fieldtype)!=-1) {
 			df.fieldtype = 'Data';
-		} else if(df.fieldtype=='Link' && ['=', '!=', 'descendants of', 'ancestors of', 'not descendants of', 'not ancestors of'].indexOf(condition)==-1) {
+		} else if(df.fieldtype=='Link' && ['=', '!=', 'descendants of', 'ancestors of', 'not descendants of',
+				'not ancestors of', 'subtree of', 'not subtree of'].indexOf(condition)==-1) {
 			df.fieldtype = 'Data';
 		}
 		if(df.fieldtype==="Data" && (df.options || "").toLowerCase()==="email") {
