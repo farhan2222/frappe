@@ -162,7 +162,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	get_report_settings() {
-		if (frappe.query_reports[this.report_name]) {
+		if (frappe.query_reports[this.report_name] && frappe.query_reports[this.report_name].html_format) {
 			this.report_settings = this.get_local_report_settings();
 			return this._load_script;
 		}

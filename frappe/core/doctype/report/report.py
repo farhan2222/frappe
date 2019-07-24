@@ -39,6 +39,12 @@ class Report(Document):
 		if self.report_type == "Report Builder":
 			self.update_report_json()
 
+	def before_rename(self, old, new, merge=False):
+		if merge:
+			frappe.throw(_("Cannot merge reports"))
+		if self.report_type != "Report Builder":
+			frappe.throw(_("Can only rename Report Builder reports"))
+
 	def before_insert(self):
 		self.set_doctype_roles()
 

@@ -197,6 +197,7 @@ frappe.views.BaseList = class BaseList {
 			page: this.page,
 			list_view: this
 		});
+		//this.list_sidebar.parent.toggleClass('hide');
 	}
 
 	toggle_side_bar() {

@@ -169,7 +169,6 @@ scheduler_events = {
 		"frappe.realtime.remove_old_task_logs",
 		"frappe.utils.scheduler.disable_scheduler_on_expiry",
 		"frappe.utils.scheduler.restrict_scheduler_events_if_dormant",
-		"frappe.email.doctype.auto_email_report.auto_email_report.send_daily",
 		"frappe.core.doctype.feedback_request.feedback_request.delete_feedback_request",
 		"frappe.core.doctype.activity_log.activity_log.clear_authentication_logs",
 	],
@@ -182,12 +181,17 @@ scheduler_events = {
 		"frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_weekly",
 		"frappe.utils.change_log.check_for_update"
 	],
-	"monthly": [
-		"frappe.email.doctype.auto_email_report.auto_email_report.send_monthly"
-	],
 	"monthly_long": [
 		"frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_monthly"
-	]
+	],
+	"cron": {
+		"0 14 * * *": [
+			"frappe.email.doctype.auto_email_report.auto_email_report.send_daily"
+		],
+		"0 14 1 * *": [
+			"frappe.email.doctype.auto_email_report.auto_email_report.send_monthly"
+		],
+	}
 }
 
 get_translated_dict = {

@@ -39,6 +39,9 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 	}
 
 	setup_view() {
+		this.page.wrapper.find(".layout-main-section-wrapper").css("margin-bottom", "5px");
+		this.page.wrapper.find(".page-body").removeClass('container').addClass('container-fluid');
+
 		this.setup_columns();
 		this.bind_charts_button();
 		super.setup_new_doc_event();

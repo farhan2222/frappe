@@ -236,8 +236,14 @@ def download(name):
 		return
 
 	frappe.local.response.filecontent = data
-	frappe.local.response.type = "download"
+	frappe.local.response.type = "pdf"
 	frappe.local.response.filename = auto_email_report.get_file_name()
+
+	frappe.local.response.mimetype = "application/pdf"
+	frappe.local.response.headers = {}
+	frappe.local.response.headers["Content-Disposition"] = (
+				"filename=\"%s\"" % frappe.local.response.filename.replace(' ', '_')).encode("utf-8")
+	frappe.local.response.data = frappe.local.response['filecontent']
 
 @frappe.whitelist()
 def send_now(names):
