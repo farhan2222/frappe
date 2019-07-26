@@ -534,7 +534,7 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 								// child table field
 								const [cdt, _field] = field.split(':');
 								const cdt_row = Object.keys(updated_doc)
-									.filter(key => Array.isArray(updated_doc[key]) && updated_doc[key][0].doctype === cdt)
+									.filter(key => Array.isArray(updated_doc[key]) && updated_doc[key].length && updated_doc[key][0].doctype === cdt)
 									.map(key => updated_doc[key])
 									.map(a => a[0])
 									.filter(cdoc => cdoc.name === _data[cdt + ':name'])[0];
