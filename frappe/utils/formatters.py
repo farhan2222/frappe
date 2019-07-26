@@ -57,7 +57,8 @@ def format_value(value, df=None, doc=None, currency=None, translated=False):
 
 	elif df.get("fieldtype") == "Currency" or (df.get("fieldtype")=="Float" and (df.options or "").strip()):
 		return fmt_money(value, precision=get_field_precision(df, doc),
-			currency=currency if currency else (get_field_currency(df, doc) if doc else None))
+			currency=currency if currency else (get_field_currency(df, doc) if doc else None),
+			force_symbol=cint(df.get("force_currency_symbol")))
 
 	elif df.get("fieldtype") == "Float":
 		precision = get_field_precision(df, doc)

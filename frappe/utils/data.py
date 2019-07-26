@@ -413,7 +413,7 @@ def parse_val(v):
 		v = int(v)
 	return v
 
-def fmt_money(amount, precision=None, currency=None):
+def fmt_money(amount, precision=None, currency=None, force_symbol=False):
 	"""
 	Convert to string with commas for thousands, millions etc
 	"""
@@ -480,7 +480,8 @@ def fmt_money(amount, precision=None, currency=None):
 	if amount != '0':
 		amount = minus + amount
 
-	if currency and frappe.defaults.get_global_default("hide_currency_symbol") != "Yes":
+	if currency and (force_symbol or frappe.defaults.get_global_default("hide_currency_symbol") != "Yes"
+			or currency != frappe.defaults.get_global_default("currency")):
 		symbol = frappe.db.get_value("Currency", currency, "symbol", cache=True) or currency
 		amount = symbol + " " + amount
 
