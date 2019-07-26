@@ -92,7 +92,7 @@ frappe.form.formatters = {
 			}
 		}
 
-		value = (value == null || value === "") ? "" : format_currency(value, currency, precision);
+		value = (value == null || value === "") ? "" : format_currency(value, currency, precision, cint(docfield.force_currency_symbol));
 
 		if ( options && options.only_value ) {
 			return value;
