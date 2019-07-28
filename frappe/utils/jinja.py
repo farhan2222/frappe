@@ -126,6 +126,7 @@ def get_allowed_functions_for_jenv():
 			"get_meta": frappe.get_meta,
 			"get_doc": frappe.get_doc,
 			"get_cached_doc": frappe.get_cached_doc,
+			"get_cached_value": frappe.get_cached_value,
 			"get_list": frappe.get_list,
 			"get_all": frappe.get_all,
 			'get_system_settings': frappe.get_system_settings,
@@ -134,6 +135,9 @@ def get_allowed_functions_for_jenv():
 			"get_fullname": frappe.utils.get_fullname,
 			"get_gravatar": frappe.utils.get_gravatar_url,
 			"full_name": frappe.local.session.data.full_name if getattr(frappe.local, "session", None) else "Guest",
+			"original_name": frappe.utils.original_name,
+			"get_original_name": frappe.utils.get_original_name,
+			"list_original_names": frappe.utils.list_original_names,
 			"render_template": frappe.render_template,
 			"request": getattr(frappe.local, 'request', {}),
 			'session': {

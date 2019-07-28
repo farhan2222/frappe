@@ -371,6 +371,9 @@ def get_print_style(style=None, print_format=None, for_legacy=False):
 		# prepend css with at_import
 		css = at_import + css
 
+	if print_format and print_format.css_file_path:
+		css += "\n\n" + frappe.get_template(print_format.css_file_path).render(context)
+
 	if print_format and print_format.css:
 		css += "\n\n" + print_format.css
 

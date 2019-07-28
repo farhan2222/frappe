@@ -649,3 +649,21 @@ def gzip_decompress(data):
 	"""
 	with GzipFile(fileobj=io.BytesIO(data)) as f:
 		return f.read()
+
+def list_original_names(dt, names, cache=False):
+	return [get_original_name(dt, name, cache) for name in names if name]
+
+def get_original_name(dt, dn, cache=False):
+	if cache:
+		doc = frappe.get_cached_value(dt, dn, ['name', 'amended_from'], as_dict=True)
+	else:
+		doc = frappe.db.get_value(dt, dn, ['name', 'amended_from'], as_dict=True)
+	return original_name(doc)
+
+def original_name(doc):
+	if not doc:
+		return ""
+	elif doc.get('amended_from'):
+		return doc.name[:doc.name.rfind('-')]
+	else:
+		return doc.name
