@@ -85,7 +85,7 @@ class DocType(Document):
 		if not self.is_new():
 			self.setup_fields_to_fetch()
 
-		if self.default_print_format and not self.custom:
+		if self.default_print_format and not frappe.conf.get("developer_mode") and not self.custom:
 			frappe.throw(_('Standard DocType cannot have default print format, use Customize Form'))
 
 	def set_default_in_list_view(self):
