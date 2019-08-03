@@ -41,6 +41,9 @@ def take_backups_if(freq):
 		take_backup_to_dropbox()
 
 def take_backup_to_dropbox(retry_count=0, upload_db_backup=True):
+	if frappe.conf.get("disable_dropbox"):
+		return
+
 	did_not_upload, error_log = [], []
 	try:
 		if cint(frappe.db.get_value("Dropbox Settings", None, "enabled")):
