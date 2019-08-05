@@ -133,7 +133,7 @@ function format_currency(v, currency, decimals, force_symbol) {
 	}
 
 	if (symbol && (frappe.boot.sysdefaults.hide_currency_symbol != "Yes"
-			|| currency != frappe.boot.sysdefaults.currency || force_symbol))
+			|| (currency && currency != frappe.boot.sysdefaults.currency) || force_symbol))
 		return symbol + " " + format_number(v, format, decimals);
 	else
 		return format_number(v, format, decimals);
