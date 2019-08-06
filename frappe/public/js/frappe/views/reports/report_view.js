@@ -71,10 +71,8 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 
 	get_args() {
 		const args = super.get_args();
-
-		return Object.assign(args, {
-			group_by: null
-		});
+		delete args['group_by'];
+		return args;
 	}
 
 	before_refresh() {
