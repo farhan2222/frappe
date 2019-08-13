@@ -8,7 +8,7 @@ frappe.provide("frappe.form.formatters");
 frappe.form.link_formatters = {};
 
 frappe.form.formatters = {
-	_style: function(value, options, right_align) {
+	_style: function(value, options, right_align, prefix) {
 		if(options && (options.inline || options.only_value)) {
 			return value;
 		} else {
@@ -31,10 +31,11 @@ frappe.form.formatters = {
 				}
 			}
 
-			if (css || right_align) {
+			if (css || right_align || prefix) {
 				right_align = right_align ? 'text-align: right;' : '';
 				css = ` style='${css}${right_align}'`;
-				return `<div${css}>${value}</div>`;
+				prefix = cstr(prefix);
+				return `<div${css}>${prefix}${value}</div>`;
 			} else {
 				return value;
 			}
@@ -65,10 +66,14 @@ frappe.form.formatters = {
 				}
 			}
 
+			var prefix = "";
+			if (docfield.fieldname == 'alt_uom_qty' && doc && doc.alt_uom) {
+				prefix = cstr(doc.alt_uom) + " ";
+			}
 			return frappe.form.formatters._style(
 				((value==null || value==="")
 					? ""
-					: format_number(value, null, precision)), options, true);
+					: format_number(value, null, precision)), options, true, prefix);
 		}
 	},
 	Int: function(value, docfield, options) {
