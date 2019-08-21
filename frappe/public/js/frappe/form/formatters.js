@@ -59,7 +59,7 @@ frappe.form.formatters = {
 		} else {
 			// show 1.000000 as 1
 			if (!(options || {}).always_show_decimals && !is_null(value)) {
-				var temp = cstr(value).split(".");
+				var temp = cstr(flt(value, precision)).split(".");
 				if (temp[1]==undefined || cint(temp[1])===0) {
 					precision = 0;
 				}

@@ -66,7 +66,7 @@ def format_value(value, df=None, doc=None, currency=None, translated=False):
 		# show 1.000000 as 1
 		# options should not specified
 		if not df.options and value is not None:
-			temp = cstr(value).split(".")
+			temp = cstr(flt(value, precision)).split(".")
 			if len(temp)==1 or cint(temp[1])==0:
 				precision = 0
 
