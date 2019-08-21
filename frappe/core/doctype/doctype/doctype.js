@@ -12,6 +12,10 @@
 // })
 
 frappe.ui.form.on('DocType', {
+	setup: function(frm) {
+		frm.page.remove_sidebar();
+	},
+
 	refresh: function(frm) {
 		if(frappe.session.user !== "Administrator" || !frappe.boot.developer_mode) {
 			if(frm.is_new()) {

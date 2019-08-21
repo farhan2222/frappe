@@ -443,6 +443,12 @@ frappe.ui.Page = Class.extend({
 		return link;
 	},
 
+	remove_sidebar: function() {
+		this.sidebar.remove(); // this removes the sidebar
+		this.wrapper.find(".layout-main-section-wrapper").removeClass("col-md-10");
+		this.wrapper.find(".layout-main-section-wrapper").addClass("col-md-12");
+	},
+
 	//---//
 
 	clear_user_actions: function() {
