@@ -66,14 +66,14 @@ frappe.form.formatters = {
 				}
 			}
 
-			var prefix = "";
+			var suffix = "";
 			if (['alt_uom_qty', 'alt_uom_size', 'alt_uom_size_std'].includes(docfield.fieldname) && doc && doc.alt_uom) {
-				prefix = " " + cstr(doc.alt_uom);
+				suffix = " " + cstr(doc.alt_uom);
 			}
 			return frappe.form.formatters._style(
 				((value==null || value==="")
 					? ""
-					: format_number(value, null, precision)), options, true, prefix);
+					: format_number(value, null, precision)), options, true, suffix);
 		}
 	},
 	Int: function(value, docfield, options) {
@@ -99,10 +99,15 @@ frappe.form.formatters = {
 
 		value = (value == null || value === "") ? "" : format_currency(value, currency, precision);
 
+		var suffix = ""
+		if (["alt_uom_rate", "base_alt_uom_rate"].includes(docfield.fieldname) && doc && doc.alt_uom) {
+			suffix = "/" + cstr(doc.alt_uom);
+		}
+
 		if ( options && options.only_value ) {
 			return value;
 		} else {
-			return frappe.form.formatters._style(value, options, true);
+			return frappe.form.formatters._style(value, options, true, suffix);
 		}
 	},
 	Check: function(value) {
