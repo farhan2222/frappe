@@ -176,7 +176,7 @@ frappe.form.formatters = {
 			return "";
 		}
 	},
-	Text: function(value) {
+	Text: function(value, docfield, options) {
 		if(value) {
 			var tags = ["<p", "<div", "<br", "<table"];
 			var match = false;
@@ -188,7 +188,7 @@ frappe.form.formatters = {
 				}
 			}
 
-			if(!match) {
+			if(!match && (!options || !options.no_newlines)) {
 				value = frappe.utils.replace_newlines(value);
 			}
 		}
@@ -229,11 +229,11 @@ frappe.form.formatters = {
 		});
 		return html;
 	},
-	SmallText: function(value) {
-		return frappe.form.formatters.Text(value);
+	SmallText: function(value, docfield, options) {
+		return frappe.form.formatters.Text(value, docfield, options);
 	},
-	TextEditor: function(value) {
-		return frappe.form.formatters.Text(value);
+	TextEditor: function(value, docfield, options) {
+		return frappe.form.formatters.Text(value, docfield, options);
 	},
 	Code: function(value) {
 		return "<pre>" + (value==null ? "" : $("<div>").text(value).html()) + "</pre>"

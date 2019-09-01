@@ -503,7 +503,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			} else if (df.fieldtype === 'Code') {
 				return value;
 			} else {
-				return frappe.format(value, df, null, doc);
+				return frappe.format(value, df, {'no_newlines': 1}, doc);
 			}
 		};
 
