@@ -825,6 +825,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		if (raise && missing_mandatory.length > 0) {
 			let message = __('Please set filters');
 			this.toggle_message(raise, message);
+			frappe.hide_progress();
 			throw "Filter missing";
 		}
 
