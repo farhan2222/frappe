@@ -755,6 +755,13 @@ select.form-control {
 	appearance: none;
 }
 
+select option[value=''] {
+	color: lightgrey;
+}
+select option:not([value='']) {
+	color: @text-color;
+}
+
 .form-control.bold {
 	color: #000;
 	font-weight: bold;

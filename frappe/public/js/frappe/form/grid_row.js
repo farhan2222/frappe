@@ -389,7 +389,7 @@ export default class GridRow {
 		var me = this;
 		if(field.$input) {
 			field.$input.on('keydown', function(e) {
-				var { TAB, UP_ARROW, DOWN_ARROW } = frappe.ui.keyCode;
+				var { TAB, UP: UP_ARROW, DOWN: DOWN_ARROW } = frappe.ui.keyCode;
 				if(!in_list([TAB, UP_ARROW, DOWN_ARROW], e.which)) {
 					return;
 				}
@@ -404,14 +404,12 @@ export default class GridRow {
 					}
 
 					base.toggle_editable_row();
-					setTimeout(function() {
-						var input = base.columns[fieldname].field.$input;
-						if(input) {
-							input.focus();
-						}
-					}, 400)
+					var input = base.columns[fieldname].field.$input;
+					if(input) {
+						input.focus();
+					}
 
-				}
+				};
 
 				// TAB
 				if(e.which==TAB && !e.shiftKey) {

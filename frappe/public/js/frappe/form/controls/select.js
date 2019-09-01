@@ -23,6 +23,8 @@ frappe.ui.form.ControlSelect = frappe.ui.form.ControlData.extend({
 			// model value must be same as whatever the input is
 			this.set_model_value(input_value);
 		}
+
+		$(this.$input).css("color", input_value ? "inherit" : "lightgrey");
 	},
 	set_options: function(value) {
 		// reset options, if something new is set
@@ -40,6 +42,9 @@ frappe.ui.form.ControlSelect = frappe.ui.form.ControlData.extend({
 
 		if(this.$input) {
 			var selected = this.$input.find(":selected").val();
+			if (options && options.length && !options[0]) {
+				options[0] = {label: this.df.label, value: options[0]}
+			}
 			this.$input.empty().add_options(options || []);
 
 			if(value===undefined && selected) {
