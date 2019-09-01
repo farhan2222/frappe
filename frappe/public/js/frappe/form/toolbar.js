@@ -173,13 +173,13 @@ frappe.ui.form.Toolbar = Class.extend({
 					doc_type: me.frm.doctype
 				})
 			}, true);
+		}
 
-			if (frappe.user.has_role('System Manager') && frappe.boot.developer_mode===1) {
-				// edit doctype
-				this.page.add_menu_item(__("Edit DocType"), function() {
-					frappe.set_route('Form', 'DocType', me.frm.doctype);
-				}, true);
-			}
+		if (frappe.user.has_role('System Manager') && frappe.boot.developer_mode===1) {
+			// edit doctype
+			this.page.add_menu_item(__("Edit DocType"), function() {
+				frappe.set_route('Form', 'DocType', me.frm.doctype);
+			}, true);
 		}
 
 		// feedback
