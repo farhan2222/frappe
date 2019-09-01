@@ -1285,6 +1285,15 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 			}
 		});
 
+		if (frappe.user.has_role('System Manager') && frappe.boot.developer_mode === 1) {
+			// edit doctype
+			items.push({
+				label: __('Edit DocType'),
+				action: () => frappe.set_route('Form', 'DocType', this.doctype),
+				standard: true
+			});
+		}
+
 		return items.map(i => Object.assign(i, { standard: true }));
 	}
 
