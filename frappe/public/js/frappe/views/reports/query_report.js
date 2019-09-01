@@ -490,6 +490,15 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 		if (!(options && options.data && options.data.labels && options.data.labels.length > 0)) return;
 
+		if (options.fieldtype) {
+			options.tooltipOptions = {
+				formatTooltipY: d => frappe.format(d, {
+					fieldtype: options.fieldtype,
+					options: options.options
+				})
+			};
+		}
+
 		return options;
 	}
 
@@ -962,12 +971,12 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			},
 			{
 				label: __('With Group Indentation'),
-				fieldname: 'with_indentation',
-				fieldtype: 'Check'
+				fieldname: "include_indentation",
+				fieldtype: "Check",
 			}
-		], ({ file_format, with_indentation }) => {
+		], ({ file_format, include_indentation }) => {
 			const column_row = this.columns.map(col => col.label);
-			const data = this.get_data_for_csv(with_indentation);
+			const data = this.get_data_for_csv(include_indentation);
 
 			if (file_format === 'CSV') {
 				const out = [column_row].concat(data);
@@ -978,7 +987,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					report_name: this.report_name,
 					file_format_type: file_format,
 					data: data,
-					columns: column_row,
+					columns: column_row
 				};
 
 				open_url_post(frappe.request.url, args);
@@ -986,7 +995,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		}, __('Export Report: '+ this.report_name), __('Download'));
 	}
 
-	get_data_for_csv() {
+	get_data_for_csv(include_indentation) {
 		const indices = this.datatable.bodyRenderer.visibleRowIndices;
 		const rows = indices.map(i => this.datatable.datamanager.getRow(i));
 		return rows.map(row => {
@@ -994,8 +1003,8 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			return row
 				.slice(standard_column_count)
 				.map((cell, i) => {
-					if (i === 0) {
-						return '   '.repeat(row.meta.indent) + (cell.content || '');
+					if (include_indentation && i===0) {
+						cell.content = '   '.repeat(row.meta.indent) + (cell.content || '');
 					}
 					return cell.content || '';
 				});
