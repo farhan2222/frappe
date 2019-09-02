@@ -749,15 +749,18 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 	set_control_value(new_value, column, data, rowIndex) {
 		return new Promise((resolve, reject) => {
-			this.report_settings.onChange(new_value, column, data, rowIndex)
-				.then(r => {
+			var res = this.report_settings.onChange(new_value, column, data, rowIndex);
+			if (!res) {
+				return resolve;
+			} else {
+				return res.then(r => {
 					if (r.message) {
 						resolve(r.message);
 					} else {
 						reject();
 					}
-				})
-				.fail(reject);
+				}).fail(reject);
+			}
 		});
 	}
 
