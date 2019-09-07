@@ -426,7 +426,7 @@ export default class GridRow {
 								me.grid.grid_rows[me.doc.idx].toggle_editable_row();
 								me.grid.set_focus_on_row(me.doc.idx+1);
 							}
-						}, 500);
+						}, 250);
 					}
 				} else if(e.which==UP_ARROW) {
 					if(me.doc.idx > 1) {

@@ -501,10 +501,8 @@ export default class Grid {
 		if(!idx) {
 			idx = me.grid_rows.length - 1;
 		}
-		setTimeout(function() {
-			me.grid_rows[idx].row
-				.find('input[type="Text"],textarea,select').filter(':visible:first').focus();
-		}, 100);
+		me.grid_rows[idx].row
+			.find('input[type="Text"],textarea,select').filter(':visible:first').focus();
 	}
 
 	setup_visible_columns() {
