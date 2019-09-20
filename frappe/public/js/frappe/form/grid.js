@@ -370,7 +370,7 @@ export default class Grid {
 			if (!this.deleted_docs || !in_list(this.deleted_docs, data.name)) {
 				return data;
 			}
-		}) : [];
+		}) : this.df.data || [];
 	}
 	set_column_disp(fieldname, show) {
 		if($.isArray(fieldname)) {
