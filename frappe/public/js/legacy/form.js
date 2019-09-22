@@ -22,7 +22,13 @@ frappe.provide('frappe.ui.form');
 frappe.ui.form.Controller = Class.extend({
 	init: function(opts) {
 		$.extend(this, opts);
-	}
+	},
+
+	remove_sidebar: function() {
+		this.frm.page.sidebar.remove(); // this removes the sidebar
+		this.frm.page.wrapper.find(".layout-main-section-wrapper").removeClass("col-md-10");
+		this.frm.page.wrapper.find(".layout-main-section-wrapper").addClass("col-md-12");
+	},
 });
 
 _f.frms = {};
