@@ -80,8 +80,8 @@ def generate_report_result(report, filters=None, user=None):
 
 			execution_time = (end_time - start_time).seconds
 
-			if execution_time > threshold and not report.prepared_report:
-				report.db_set('prepared_report', 1)
+			# if execution_time > threshold and not report.prepared_report:
+			# 	report.db_set('prepared_report', 1)
 
 			frappe.cache().hset('report_execution_time', report.name, execution_time)
 
