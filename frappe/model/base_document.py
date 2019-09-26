@@ -693,13 +693,16 @@ class BaseDocument(object):
 		return self._precision[cache_key][fieldname]
 
 
-	def get_formatted(self, fieldname, doc=None, currency=None, absolute_value=False, translated=False):
+	def get_formatted(self, fieldname, doc=None, currency=None, absolute_value=False, translated=False, precision=None):
 		from frappe.utils.formatters import format_value
 
 		df = self.meta.get_field(fieldname)
 		if not df and fieldname in default_fields:
 			from frappe.model.meta import get_default_df
 			df = get_default_df(fieldname)
+
+		if precision:
+			df.precision = precision
 
 		val = self.get(fieldname)
 
