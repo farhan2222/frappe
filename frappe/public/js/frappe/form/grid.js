@@ -372,7 +372,7 @@ export default class Grid {
 			}
 		}) : [];
 	}
-	set_column_disp(fieldname, show) {
+	set_column_disp(fieldname, show, do_not_refresh) {
 		if($.isArray(fieldname)) {
 			var me = this;
 			for(var i=0, l=fieldname.length; i<l; i++) {
@@ -385,7 +385,9 @@ export default class Grid {
 			this.set_editable_grid_column_disp(fieldname, show);
 		}
 
-		this.refresh(true);
+		if (!do_not_refresh) {
+			this.refresh(true);
+		}
 	}
 	set_editable_grid_column_disp(fieldname, show) {
 		//Hide columns for editable grids

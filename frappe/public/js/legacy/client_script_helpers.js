@@ -160,7 +160,7 @@ _f.Frm.prototype.set_currency_labels = function(fields_list, currency, parentfie
 	});
 };
 
-_f.Frm.prototype.field_map = function(fnames, fn) {
+_f.Frm.prototype.field_map = function(fnames, fn, do_not_refresh) {
 	if(typeof fnames==='string') {
 		if(fnames == '*') {
 			fnames = Object.keys(this.fields_dict);
@@ -173,7 +173,9 @@ _f.Frm.prototype.field_map = function(fnames, fn) {
 		var field = frappe.meta.get_docfield(cur_frm.doctype, fieldname, this.docname);
 		if(field) {
 			fn(field);
-			this.refresh_field(fieldname);
+			if (!do_not_refresh) {
+				this.refresh_field(fieldname);
+			}
 		}
 	}
 };
@@ -205,22 +207,22 @@ _f.Frm.prototype.set_df_property = function(fieldname, property, value, docname,
 	}
 };
 
-_f.Frm.prototype.toggle_enable = function(fnames, enable) {
+_f.Frm.prototype.toggle_enable = function(fnames, enable, do_not_refresh) {
 	this.field_map(fnames, function(field) {
 		field.read_only = enable ? 0 : 1;
-	});
+	}, do_not_refresh);
 };
 
-_f.Frm.prototype.toggle_reqd = function(fnames, mandatory) {
+_f.Frm.prototype.toggle_reqd = function(fnames, mandatory, do_not_refresh) {
 	this.field_map(fnames, function(field) {
 		field.reqd = mandatory ? true : false;
-	});
+	}, do_not_refresh);
 };
 
-_f.Frm.prototype.toggle_display = function(fnames, show) {
+_f.Frm.prototype.toggle_display = function(fnames, show, do_not_refresh) {
 	this.field_map(fnames, function(field) {
 		field.hidden = show ? 0 : 1;
-	});
+	}, do_not_refresh);
 };
 
 _f.Frm.prototype.call_server = function(method, args, callback) {
