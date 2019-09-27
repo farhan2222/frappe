@@ -21,6 +21,3 @@ def get_context(context):
 	if not frappe.conf.developer_mode:
 		context["google_analytics_id"] = (frappe.db.get_single_value("Website Settings", "google_analytics_id")
 			or frappe.conf.get("google_analytics_id"))
-
-	context["google_maps_api_key"] = (frappe.db.get_single_value("Website Settings", "google_maps_api_key")
-		or frappe.conf.get("google_maps_api_key"))
