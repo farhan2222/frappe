@@ -664,6 +664,11 @@ _f.Frm.prototype.copy_doc = function(onload, from_amend) {
 	if(onload) {
 		onload(newdoc);
 	}
+
+	if (!newdoc.__onload) {
+		newdoc.__onload = {};
+	}
+	newdoc.__onload.from_copy = true;
 	frappe.set_route('Form', newdoc.doctype, newdoc.name);
 };
 
