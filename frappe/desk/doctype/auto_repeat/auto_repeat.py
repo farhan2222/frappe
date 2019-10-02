@@ -294,12 +294,12 @@ def send_notification(new_rv, auto_repeat_doc, print_format='Standard'):
 	if not auto_repeat_doc.subject:
 		subject = _("New {0}: #{1}").format(new_rv.doctype, new_rv.name)
 	elif "{" in auto_repeat_doc.subject:
-		subject = frappe.render_template(auto_repeat_doc.subject, {'doc': new_rv})
+		subject = frappe.render_template(auto_repeat_doc.subject, new_rv)
 
 	if not auto_repeat_doc.message:
 		message = _("Please find attached {0} #{1}").format(new_rv.doctype, new_rv.name)
 	elif "{" in auto_repeat_doc.message:
-		message = frappe.render_template(auto_repeat_doc.message, {'doc': new_rv})
+		message = frappe.render_template(auto_repeat_doc.message, new_rv)
 
 	attachments = [frappe.attach_print(new_rv.doctype, new_rv.name,
 						file_name=new_rv.name, print_format=print_format)]
