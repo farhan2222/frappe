@@ -679,3 +679,16 @@ def group_report_data(rows_to_group, group_by, group_by_labels=None, total_field
 			out.append(group_object)
 
 	return out
+
+def hide_columns_if_filtered(columns, filters):
+	def condition(col):
+		if col.get('hide_if_filtered'):
+			filter_value = filters.get(col.get('filter_fieldname') or col['fieldname'])
+			if filter_value:
+				if isinstance(filter_value, list):
+					return len(filter_value) == 1
+				else:
+					return True
+		return False
+
+	return [c for c in columns if not condition(c)]
