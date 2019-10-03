@@ -41,7 +41,7 @@ frappe.form.formatters = {
 			}
 		}
 	},
-	Data: function(value, options) {
+	Data: function(value, docfield, options) {
 		return value==null ? "" : frappe.form.formatters._style(value, options);
 	},
 	Select: function(value) {

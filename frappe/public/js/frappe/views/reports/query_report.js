@@ -684,7 +684,15 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					// this is needed only for currency formatting
 					data = this.data[0];
 				}
+
 				options = Object.assign({for_print: false, always_show_decimals: true}, options || {});
+				if (data && data._bold) {
+					if (!options.hasOwnProperty('css')) {
+						options.css = {};
+					}
+					options.css['font-weight'] = 'bold';
+				}
+
 				return frappe.format(value, column, options, data);
 			};
 
