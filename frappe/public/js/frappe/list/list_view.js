@@ -133,7 +133,8 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			this.meta.track_seen ? '_seen' : null,
 			this.sort_by,
 			'enabled',
-			'disabled'
+			'disabled',
+			'color'
 		);
 
 		fields.forEach(f => this._add_field(f));
@@ -1135,12 +1136,12 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		}
 
 		// Bulk submit
-		if (frappe.model.is_submittable(doctype) && has_submit_permission(doctype)) {
+		if (frappe.model.is_submittable(doctype) && has_submit_permission(doctype) && !(frappe.model.has_workflow(doctype))) {
 			actions_menu_items.push(bulk_submit());
 		}
 
 		// Bulk cancel
-		if (frappe.model.can_cancel(doctype)) {
+		if (frappe.model.can_cancel(doctype) && !(frappe.model.has_workflow(doctype))) {
 			actions_menu_items.push(bulk_cancel());
 		}
 

@@ -213,7 +213,11 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 						// child table field
 						const [cdt, _field] = fieldname.split(':');
 						const cdt_row = Object.keys(doc)
-							.filter(key => Array.isArray(doc[key]) && doc[key][0].doctype === cdt)
+							.filter(key =>
+								Array.isArray(doc[key])
+								&& doc[key].length
+								&& doc[key][0].doctype === cdt
+							)
 							.map(key => doc[key])
 							.map(a => a[0])
 							.filter(cdoc => cdoc.name === d[cdt + ':name'])[0];
@@ -533,7 +537,14 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 				control.set_value(value);
 				return this.set_control_value(doctype, docname, fieldname, value)
 					.then((updated_doc) => {
-						const _data = this.data.find(d => d.name === updated_doc.name);
+						const _data = this.data
+							.filter(b => b.name === updated_doc.name)
+							.find(a =>
+								// child table cell
+								(doctype != updated_doc.doctype && a[doctype + ":name"] == docname)
+								|| doctype == updated_doc.doctype
+							);
+
 						for (let field in _data) {
 							if (field.includes(':')) {
 								// child table field
@@ -1136,7 +1147,7 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 					}
 
 					frappe.ui.get_print_settings(false, (print_settings) => {
-						var title =  __(this.doctype);
+						var title =  this.report_name || __(this.doctype);
 						frappe.render_grid({
 							title: title,
 							subtitle: this.get_filters_html_for_print(),
@@ -1219,6 +1230,7 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 						primary_action: (data) => {
 							args.cmd = 'frappe.desk.reportview.export_query';
 							args.file_format_type = data.file_format_type;
+							args.title = this.report_name || this.doctype;
 
 							if(this.add_totals_row) {
 								args.add_totals_row = 1;
