@@ -402,6 +402,9 @@ export default class GridRow {
 					if(in_list(['Text', 'Small Text'], fieldtype)) {
 						return;
 					}
+					if(field.autocomplete_open) {
+						return;
+					}
 
 					base.toggle_editable_row();
 					var input = base.columns[fieldname].field.$input;
@@ -413,30 +416,36 @@ export default class GridRow {
 
 				// TAB
 				if(e.which==TAB && !e.shiftKey) {
-					// last column
-					if($(this).attr('data-last-input') ||
-						me.grid.wrapper.find('.grid-row :input:enabled:last').get(0)===this) {
-						setTimeout(function() {
-							if(me.doc.idx === values.length) {
-								// last row
+					var last_column = me.wrapper.find(':input:enabled:last').get(0);
+					var is_last_column = $(this).attr('data-last-input') || last_column === this;
+
+					if (is_last_column) {
+						// last row
+						if (me.doc.idx === values.length) {
+							setTimeout(function () {
 								me.grid.add_new_row(null, null, true);
 								me.grid.grid_rows[me.grid.grid_rows.length - 1].toggle_editable_row();
 								me.grid.set_focus_on_row();
-							} else {
-								me.grid.grid_rows[me.doc.idx].toggle_editable_row();
-								me.grid.set_focus_on_row(me.doc.idx+1);
-							}
-						}, 250);
+							}, 100);
+						}
+						// last column before last row
+						else {
+							me.grid.grid_rows[me.doc.idx].toggle_editable_row();
+							me.grid.set_focus_on_row(me.doc.idx);
+							return false;
+						}
 					}
 				} else if(e.which==UP_ARROW) {
 					if(me.doc.idx > 1) {
 						var prev = me.grid.grid_rows[me.doc.idx-2];
 						move_up_down(prev);
+						return false;
 					}
 				} else if(e.which==DOWN_ARROW) {
 					if(me.doc.idx < values.length) {
 						var next = me.grid.grid_rows[me.doc.idx];
 						move_up_down(next);
+						return false;
 					}
 				}
 
