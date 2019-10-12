@@ -143,7 +143,7 @@ export default class Grid {
 					me.grid_rows_by_docname[docname].remove();
 					dirty = true;
 				});
-				tasks.push(() => frappe.timeout(0.1));
+				tasks.push(() => frappe.timeout(0.01));
 			});
 
 			tasks.push(() => {
