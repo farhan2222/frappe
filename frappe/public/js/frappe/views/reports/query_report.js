@@ -292,11 +292,6 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		let filters = this.get_filter_values(true);
 		let query = frappe.utils.get_query_string(frappe.get_route_str());
 
-		if(query) {
-			let obj = frappe.utils.get_query_params(query);
-			filters = Object.assign(filters || {}, obj);
-		}
-
 		// only one refresh at a time
 		if (this.last_ajax) {
 			this.last_ajax.abort();
