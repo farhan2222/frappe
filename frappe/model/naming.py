@@ -140,6 +140,8 @@ def parse_naming_series(parts, doctype='', doc=''):
 			part = today.strftime('%Y')
 		elif e == 'FY':
 			part = frappe.defaults.get_user_default("fiscal_year")
+		elif e == 'CO' and doc.get('company'):
+			part = frappe.get_cached_value('Company', doc.get('company'), 'abbr')
 		elif e.startswith('{') and doc:
 			e = e.replace('{', '').replace('}', '')
 			part = doc.get(e)
