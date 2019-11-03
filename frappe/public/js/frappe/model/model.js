@@ -484,11 +484,11 @@ $.extend(frappe.model, {
 		var doc = locals[doctype] && locals[doctype][name];
 		if(!doc) return;
 
-		var parent = null;
+		var parent = null, parenttype = null, parentfield = null;
 		if(doc.parenttype) {
-			var parent = doc.parent,
-				parenttype = doc.parenttype,
-				parentfield = doc.parentfield;
+			parent = doc.parent;
+			parenttype = doc.parenttype;
+			parentfield = doc.parentfield;
 		}
 		delete locals[doctype][name];
 		if(parent) {
