@@ -122,7 +122,7 @@ def parse_naming_series(parts, doctype='', doc='', set_series_number_field=''):
 	if isinstance(parts, string_types):
 		parts = parts.split('.')
 	series_set = False
-	today = now_datetime()
+	today = frappe.utils.get_datetime(doc.get("creation") if doc else None)
 	for e in parts:
 		part = ''
 		if e.startswith('#'):
@@ -143,7 +143,7 @@ def parse_naming_series(parts, doctype='', doc='', set_series_number_field=''):
 			part = today.strftime('%Y')
 		elif e == 'FY':
 			part = frappe.defaults.get_user_default("fiscal_year")
-		elif e == 'CO' and doc.get('company'):
+		elif e == 'CO' and doc and doc.get('company'):
 			part = frappe.get_cached_value('Company', doc.get('company'), 'abbr')
 		elif e.startswith('{') and doc:
 			e = e.replace('{', '').replace('}', '')
@@ -174,7 +174,7 @@ def getseries(key, digits, doctype=''):
 	return ('%0'+str(digits)+'d') % current
 
 
-def revert_series_if_last(key, name):
+def revert_series_if_last(key, name, doc=None):
 	if ".#" in key:
 		prefix, hashes = key.rsplit(".", 1)
 		if "#" not in hashes:
@@ -183,7 +183,7 @@ def revert_series_if_last(key, name):
 		prefix = key
 
 	if '.' in prefix:
-		prefix = parse_naming_series(prefix.split('.'))
+		prefix = parse_naming_series(prefix.split('.'), '', doc)
 
 	count = cint(name.replace(prefix, ""))
 	current = frappe.db.sql("select `current` from `tabSeries` where name=%s for update", (prefix,))
