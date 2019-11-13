@@ -76,7 +76,7 @@ def set_name_from_naming_options(autoname, doc):
 	elif '#' in autoname:
 		doc.name = make_autoname(autoname, doc=doc)
 
-def set_name_by_naming_series(doc, set_series_number_field=''):
+def set_name_by_naming_series(doc, series_value_field=''):
 	"""Sets name by the `naming_series` property"""
 	if not doc.naming_series:
 		doc.naming_series = get_default_naming_series(doc.doctype)
@@ -84,9 +84,9 @@ def set_name_by_naming_series(doc, set_series_number_field=''):
 	if not doc.naming_series:
 		frappe.throw(frappe._("Naming Series mandatory"))
 
-	doc.name = make_autoname(doc.naming_series+'.#####', '', doc, set_series_number_field)
+	doc.name = make_autoname(doc.naming_series+'.#####', '', doc, series_value_field)
 
-def make_autoname(key='', doctype='', doc='', set_series_number_field=''):
+def make_autoname(key='', doctype='', doc='', series_value_field=''):
 	"""
 	Creates an autoname from the given key:
 
@@ -113,11 +113,11 @@ def make_autoname(key='', doctype='', doc='', set_series_number_field=''):
 		frappe.throw(_("Invalid naming series (. missing)") + (_(" for {0}").format(doctype) if doctype else ""))
 
 	parts = key.split('.')
-	n = parse_naming_series(parts, doctype, doc, set_series_number_field)
+	n = parse_naming_series(parts, doctype, doc, series_value_field)
 	return n
 
 
-def parse_naming_series(parts, doctype='', doc='', set_series_number_field=''):
+def parse_naming_series(parts, doctype='', doc='', series_value_field=''):
 	n = ''
 	if isinstance(parts, string_types):
 		parts = parts.split('.')
@@ -128,11 +128,15 @@ def parse_naming_series(parts, doctype='', doc='', set_series_number_field=''):
 		if e.startswith('#'):
 			if not series_set:
 				digits = len(e)
-				part = getseries(n, digits, doctype)
-				series_set = True
 
-				if set_series_number_field and doc:
-					doc.set(set_series_number_field, cint(part))
+				if series_value_field and doc and cint(doc.get(series_value_field)):
+					part = ('%0'+str(digits)+'d') % cint(doc.get(series_value_field))
+				else:
+					part = getseries(n, digits, doctype)
+					if series_value_field and doc:
+						doc.set(series_value_field, cint(part))
+
+				series_set = True
 		elif e == 'YY':
 			part = today.strftime('%y')
 		elif e == 'MM':
