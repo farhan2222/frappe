@@ -1875,6 +1875,8 @@ var AggregationChart = function (_BaseChart) {
 		value: function configure(args) {
 			get(AggregationChart.prototype.__proto__ || Object.getPrototypeOf(AggregationChart.prototype), 'configure', this).call(this, args);
 
+			this.config.formatTooltipX = args.tooltipOptions.formatTooltipX;
+			this.config.formatTooltipY = args.tooltipOptions.formatTooltipY;
 			this.config.maxSlices = args.maxSlices || 20;
 			this.config.maxLegendPoints = args.maxLegendPoints || 20;
 		}
@@ -1939,7 +1941,8 @@ var AggregationChart = function (_BaseChart) {
 						className: 'stats',
 						inside: _this3.statsWrapper
 					});
-					stats.innerHTML = '<span class="indicator">\n\t\t\t\t\t<i style="background: ' + _this3.colors[i] + '"></i>\n\t\t\t\t\t<span class="text-muted">' + xValues[i] + ':</span>\n\t\t\t\t\t' + d + '\n\t\t\t\t</span>';
+					var formatted = _this3.config.formatTooltipY ? _this3.config.formatTooltipY(d) : d;
+					stats.innerHTML = '<span class="indicator">\n\t\t\t\t\t<i style="background: ' + _this3.colors[i] + '"></i>\n\t\t\t\t\t<span class="text-muted">' + xValues[i] + ':</span>\n\t\t\t\t\t' + formatted + '\n\t\t\t\t</span>';
 				}
 			});
 		}
