@@ -33,7 +33,7 @@ frappe.form.formatters = {
 
 			if (css || right_align || suffix) {
 				right_align = right_align ? 'text-align: right;' : '';
-				css = ` style='${css}${right_align}'`;
+				css = ` style='${cstr(css)}${right_align}'`;
 				suffix = cstr(suffix);
 				return `<div${css}>${value}${suffix}</div>`;
 			} else {
