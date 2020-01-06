@@ -317,6 +317,10 @@
 		"public/js/lib/datepicker/datepicker.min.js",
 		"public/js/lib/datepicker/datepicker.en.js"
 	],
+	"js/project_milestones.min.js": [
+		"public/js/frappe/utils/datetime.js",
+		"public/js/frappe/request.js"
+	],
 	"css/web_form.css": [
 		"public/less/list.less",
 		"website/css/web_form.css",
