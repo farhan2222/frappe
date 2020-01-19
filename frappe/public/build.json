@@ -319,7 +319,12 @@
 	],
 	"js/project_milestones.min.js": [
 		"public/js/frappe/utils/datetime.js",
-		"public/js/frappe/request.js"
+		"public/js/frappe/request.js",
+		"public/js/frappe/ui/keyboard.js"
+	],
+	"css/project_milestones.css": [
+		"public/less/controls.less",
+		"public/less/flex.less"
 	],
 	"css/web_form.css": [
 		"public/less/list.less",
