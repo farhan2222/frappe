@@ -45,6 +45,11 @@
 		"public/js/frappe/misc/rating_icons.html",
 		"public/js/frappe/socketio_client.js"
 	],
+	"js/web-extended.min.js": [
+		"public/js/lib/datepicker/datepicker.min.js",
+		"public/js/lib/datepicker/datepicker.en.js",
+		"public/js/frappe/misc/datetime.js"
+	],
 	"js/control.min.js": [
 		"public/js/frappe/ui/capture.js",
 		"public/js/frappe/form/controls/base_control.js",
