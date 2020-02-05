@@ -728,6 +728,7 @@ export default class Grid {
 		} else {
 			btn.removeClass('hidden');
 		}
+		return btn;
 	}
 	clear_custom_buttons() {
 		// hide all custom buttons
