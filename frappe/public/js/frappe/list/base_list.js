@@ -9,8 +9,7 @@ frappe.views.BaseList = class BaseList {
 		frappe.run_serially([
 			() => this.init(),
 			() => this.before_refresh(),
-			() => this.refresh(),
-			() => frappe.route_options = null
+			() => this.refresh()
 		]);
 	}
 
@@ -177,7 +176,7 @@ frappe.views.BaseList = class BaseList {
 			if (item.condition && item.condition() === false) {
 				return;
 			}
-			const $item = this.page.add_menu_item(item.label, item.action, item.standard);
+			const $item = this.page.add_menu_item(item.label, item.action, item.standard, item.shortcut);
 			if (item.class) {
 				$item && $item.addClass(item.class);
 			}
@@ -208,7 +207,7 @@ frappe.views.BaseList = class BaseList {
 
 	show_or_hide_sidebar() {
 		let show_sidebar = JSON.parse(localStorage.show_sidebar || 'true');
-		$(document.body).toggleClass('no-sidebar', !show_sidebar);
+		$(document.body).toggleClass('no-list-sidebar', !show_sidebar);
 	}
 
 	setup_main_section() {
@@ -376,6 +375,9 @@ frappe.views.BaseList = class BaseList {
 			this.render();
 			this.after_render();
 			this.freeze(false);
+			if (this.settings.refresh) {
+				this.settings.refresh(this);
+			}
 		});
 	}
 
@@ -558,10 +560,12 @@ class FilterArea {
 		const fields_dict = this.list_view.page.fields_dict;
 
 		if (fieldname in fields_dict) {
-			fields_dict[fieldname].set_value('');
-			return;
+			return fields_dict[fieldname].set_value('');
 		}
-		this.filter_list.get_filter(fieldname).remove();
+
+		let filter = this.filter_list.get_filter(fieldname);
+		if (filter) filter.remove();
+		return Promise.resolve();
 	}
 
 	clear(refresh = true) {
@@ -587,7 +591,7 @@ class FilterArea {
 		let fields = [
 			{
 				fieldtype: 'Data',
-				label: 'ID',
+				label: 'Name',
 				condition: 'like',
 				doctype: this.list_view.doctype,
 				fieldname: 'name',
@@ -613,14 +617,12 @@ class FilterArea {
 		});
 
 		fields = fields.concat(doctype_fields.filter(
-			df => df.in_standard_filter &&
-				frappe.model.is_value_type(df.fieldtype)
+			df => (df.fieldname === title_field) || (df.in_standard_filter && frappe.model.is_value_type(df.fieldtype))
 		).map(df => {
 			let options = df.options;
 			let condition = '=';
 			let fieldtype = df.fieldtype;
-
-			if (['Text', 'Small Text', 'Text Editor', 'Data'].includes(fieldtype)) {
+			if (['Text', 'Small Text', 'Text Editor', 'HTML Editor', 'Data', 'Code'].includes(fieldtype)) {
 				fieldtype = 'Data';
 				condition = 'like';
 			}
@@ -634,7 +636,10 @@ class FilterArea {
 			if (df.fieldtype === "Link" && frappe.boot.nested_set_doctypes.includes(df.options)) {
 				condition = 'subtree of';
 			}
-
+			let default_value = (fieldtype === 'Link') ? frappe.defaults.get_user_default(options) : null;
+			if (['__default', '__global'].includes(default_value)) {
+				default_value = null;
+			}
 			return {
 				fieldtype: fieldtype,
 				label: __(df.label),
@@ -642,27 +647,14 @@ class FilterArea {
 				options: options,
 				fieldname: df.fieldname,
 				condition: condition,
+				default: default_value,
 				onchange: () => this.refresh_list_view(),
-				ignore_link_validation: fieldtype === 'Dynamic Link'
+				ignore_link_validation: fieldtype === 'Dynamic Link',
+				is_filter: 1,
 			};
 		}));
 
 		fields.map(df => this.list_view.page.add_field(df));
-
-		// search icon in name filter
-		$('<span class="octicon octicon-search text-muted small"></span>')
-			.appendTo(this.list_view.page.fields_dict.name.$wrapper)
-			.css({
-				'position': 'absolute',
-				'z-index': '1',
-				'right': '7px',
-				'top': '9px',
-				'font-size': '90%'
-			});
-
-		this.list_view.page.fields_dict.name.$wrapper
-			.find('.form-control')
-			.css('padding-right', '2em');
 	}
 
 	get_standard_filters() {

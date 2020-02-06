@@ -77,6 +77,13 @@ frappe.form.formatters = {
 	Percent: function(value, docfield, options) {
 		return frappe.form.formatters._style(flt(value, 2) + "%", options, true)
 	},
+	Rating: function(value) {
+		return `<span class="rating">
+	${Array.from(new Array(5)).map((_, i) =>
+		`<i class="fa fa-fw fa-star ${i < (value || 0) ? "star-click": "" } star-icon" data-idx="${(i+1)}"></i>`
+	).join('')}
+		</span>`;
+	},
 	Currency: function (value, docfield, options, doc) {
 		var currency  = frappe.meta.get_field_currency(docfield, doc);
 		var precision = docfield.precision || cint(frappe.boot.sysdefaults.currency_precision) || 2;
@@ -102,7 +109,7 @@ frappe.form.formatters = {
 	},
 	Check: function(value) {
 		if(value) {
-			return '<i class="octicon octicon-check" style="margin-right: 3px;"></i>';
+			return '<i class="fa fa-check" style="margin-right: 3px;"></i>';
 		} else {
 			return '<i class="fa fa-square disabled-check"></i>';
 		}
@@ -135,16 +142,19 @@ frappe.form.formatters = {
 			return frappe.form.formatters._style(repl('<a onclick="%(onclick)s">%(value)s</a>',
 				{onclick: docfield.link_onclick.replace(/"/g, '&quot;'), value:value}), options);
 		} else if(docfield && doctype) {
-			return frappe.form.formatters._style(repl('<a class="grey" href="#Form/%(doctype)s/%(name)s" data-doctype="%(doctype)s">%(label)s</a>', {
-				doctype: encodeURIComponent(doctype),
-				name: encodeURIComponent(original_value),
-				label: __(options && options.label || value)
-			}), options);
+			return frappe.form.formatters._style(`<a class="grey"
+				href="#Form/${encodeURIComponent(doctype)}/${encodeURIComponent(original_value)}"
+				data-doctype="${doctype}"
+				data-name="${original_value}">
+				${__(options && options.label || value)}</a>`, options);
 		} else {
 			return value;
 		}
 	},
 	Date: function(value) {
+		if (!frappe.datetime.str_to_user) {
+			return value;
+		}
 		if (value) {
 			value = frappe.datetime.str_to_user(value);
 			// handle invalid date
@@ -193,7 +203,7 @@ frappe.form.formatters = {
 			}
 		}
 
-		return frappe.form.formatters.Data(value);
+		return frappe.form.formatters.Data(value, docfield, options);
 	},
 	LikedBy: function(value) {
 		var html = "";
@@ -263,6 +273,16 @@ frappe.form.formatters = {
 			value = flt(flt(value) / 1024, 1) + "K";
 		}
 		return value;
+	},
+	TableMultiSelect: function(rows, df, options) {
+		rows = rows || [];
+		const meta = frappe.get_meta(df.options);
+		const link_field = meta.fields.find(df => df.fieldtype === 'Link');
+		const formatted_values = rows.map(row => {
+			const value = row[link_field.fieldname];
+			return frappe.format(value, link_field, options, row);
+		});
+		return formatted_values.join(', ');
 	}
 }
 
