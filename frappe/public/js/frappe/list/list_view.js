@@ -358,6 +358,10 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		});
 	}
 
+	after_render() {
+		this.list_sidebar.reload_stats();
+	}
+
 	render() {
 		this.$result.find('.list-row-container').remove();
 		if (this.data.length > 0) {
@@ -646,7 +650,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		let user = frappe.session.user;
 		let subject_field = this.columns[0].df;
 		let value = doc[subject_field.fieldname] || doc.name;
-		let subject = strip_html(value);
+		let subject = strip_html(value.toString());
 		let escaped_subject = frappe.utils.escape_html(subject);
 
 		const liked_by = JSON.parse(doc._liked_by || '[]');
