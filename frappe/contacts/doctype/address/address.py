@@ -46,7 +46,7 @@ class Address(Document):
 	def link_address(self):
 		"""Link address based on owner"""
 		if not self.links and not self.is_your_company_address:
-			contact_name = frappe.db.get_value("Contact", {"email_id": self.owner})
+			contact_name = frappe.db.get_value("Contact", {"user": self.owner})
 			if contact_name:
 				contact = frappe.get_cached_doc('Contact', contact_name)
 				for link in contact.links:
