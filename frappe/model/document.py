@@ -443,7 +443,8 @@ class Document(BaseDocument):
 			d.docstatus = self.docstatus
 
 	def _validate(self):
-		self._validate_mandatory()
+		if self.doctype != 'Quotation':
+			self._validate_mandatory()
 		self._validate_selects()
 		self._validate_length()
 		self._extract_images_from_text_editor()
