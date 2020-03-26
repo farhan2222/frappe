@@ -14,6 +14,26 @@
         {%- endif %} -->
 		{% if result_heading_template %}{% include result_heading_template %}{% endif %}
 
+		{% if doctype == "Quotation" or doctype == "Sales Order" %}
+		<div class="row margin-top bold">
+			<div class="col-sm-2 ">
+				{{ _("Name") }}
+			</div>
+			<div class="col-sm-3 font-size">
+				{{ _("Transaction Date") }}
+			</div>
+			<div class="col-sm-3">
+				{{ _("Delivery Date") }}
+			</div>
+			<div class="col-sm-2 text-right">
+				{{ _("Total Qty") }}
+			</div>
+			<div class="col-sm-2 text-right">
+				{{ _("Grand Total") }}
+			</div>
+		</div>
+		{% endif %}
+
     	<div class="result">
     		{% for item in result %}
     			{{ item }}
