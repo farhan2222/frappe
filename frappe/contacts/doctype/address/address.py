@@ -62,7 +62,7 @@ class Address(Document):
 						where (c.user = %(owner)s or c.email_id = %(owner)s) 
 						and exists(select l.name from `tabDynamic Link` l
 						where l.parent=c.name and l.parenttype='Contact' 
-						and l.link_doctype = 'Customer' and ifnull(l.link_name, '') != '')
+						and ifnull(l.link_doctype, '') != '' and ifnull(l.link_name, '') != '')
 					""", {"owner": self.owner})
 		return contact_name
 
