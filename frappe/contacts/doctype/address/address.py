@@ -46,14 +46,25 @@ class Address(Document):
 	def link_address(self):
 		"""Link address based on owner"""
 		if not self.links and not self.is_your_company_address:
-			contact_name = frappe.db.get_value("Contact", {"email_id": self.owner})
+			contact_name = self.get_contact_name()
 			if contact_name:
-				contact = frappe.get_cached_doc('Contact', contact_name)
+				contact = frappe.get_cached_doc('Contact', contact_name[0])
 				for link in contact.links:
 					self.append('links', dict(link_doctype=link.link_doctype, link_name=link.link_name))
 				return True
 
 		return False
+
+	def get_contact_name(self):
+		contact_name = frappe.db.sql_list("""
+						select c.name
+						from `tabContact` c
+						where (c.user = %(owner)s or c.email_id = %(owner)s) 
+						and exists(select l.name from `tabDynamic Link` l
+						where l.parent=c.name and l.parenttype='Contact' 
+						and ifnull(l.link_doctype, '') != '' and ifnull(l.link_name, '') != '')
+					""", {"owner": self.owner})
+		return contact_name
 
 	def validate_reference(self):
 		if self.is_your_company_address:
