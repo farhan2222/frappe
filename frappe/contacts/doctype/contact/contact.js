@@ -38,7 +38,7 @@ frappe.ui.form.on("Contact", {
 				}
 			}
 		});
-		frm.set_query('user_id', function () {
+		frm.set_query('user', function () {
 			return {
 				query: "frappe.core.doctype.user.user.user_query",
 				filters: {ignore_user_type: 1}
