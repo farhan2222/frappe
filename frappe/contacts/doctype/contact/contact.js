@@ -38,6 +38,12 @@ frappe.ui.form.on("Contact", {
 				}
 			}
 		});
+		frm.set_query('user_id', function () {
+			return {
+				query: "frappe.core.doctype.user.user.user_query",
+				filters: {ignore_user_type: 1}
+			}
+		});
 		frm.refresh_field("links");
 	},
 	validate: function(frm) {
