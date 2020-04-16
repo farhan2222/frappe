@@ -8,7 +8,7 @@
 
 
 {% block breadcrumbs %}
-{% if has_header and login_required %}
+{% if login_required %}
 {% include "templates/includes/breadcrumbs.html" %}
 {% endif %}
 {% endblock %}

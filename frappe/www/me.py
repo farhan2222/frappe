@@ -16,7 +16,6 @@ def get_context(context):
 
 	context.show_sidebar=False
 	info = get_fullname_and_avatar(frappe.session.user)
-	context.parents = [{"route":"/", "title":_("Home")}]
 	context.title = _("My Account")
 	context["fullname"] = info.fullname
 	context["user_image"] = info.avatar
