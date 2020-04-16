@@ -1,5 +1,9 @@
-{% if parents and parents|length > 0 %}
 <ul class="breadcrumb" itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<li>
+		<a href="{{ url_prefix }}{{ '/' | abs_url }}" itemprop="url">
+		<span itemprop="title">{{_('Home')}}</span>
+		</a>
+	</li>
 	{% for parent in parents %}
 		<li>
 			<a href="{{ url_prefix }}{{ parent.route | abs_url }}" itemprop="url">
@@ -9,4 +13,3 @@
 	{% endfor %}
 	<li class="active"><span itemprop="title">{{ title or "" }}</span></li>
 </ul>
-{% endif %}
