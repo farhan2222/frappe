@@ -174,6 +174,8 @@ def get_context(context):
 		context.show_in_grid = self.show_in_grid
 		self.load_translations(context)
 
+		context.show_sidebar = False
+
 	def load_translations(self, context):
 		translated_messages = frappe.translate.get_dict('doctype', self.doc_type)
 		# Sr is not added by default, had to be added manually
