@@ -125,11 +125,14 @@ frappe.ui.FieldGroup = frappe.ui.form.Layout.extend({
 		return this.set_value(key, val);
 	},
 	set_values: function(dict) {
-		for(var key in dict) {
+		let tasks = [];
+		for(const key in dict) {
 			if(this.fields_dict[key]) {
-				this.set_value(key, dict[key]);
+				tasks.push(() => this.set_value(key, dict[key]));
 			}
 		}
+
+		return frappe.run_serially(tasks);
 	},
 	clear: function() {
 		for(var key in this.fields_dict) {
