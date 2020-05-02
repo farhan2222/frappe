@@ -329,7 +329,7 @@ def get_context(context):
 		parents = None
 
 		if context.is_list and not context.parents:
-			parents = [{"title": _("My Account"), "name": "me"}]
+			parents = []
 		elif context.parents:
 			parents = context.parents
 
