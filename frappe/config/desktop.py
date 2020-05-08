@@ -9,7 +9,8 @@ def get_data():
 			"color": "#FFF5A7",
 			"reverse": 1,
 			"icon": "octicon octicon-calendar",
-			"type": "module"
+			"type": "module",
+			"hidden": 1
 		},
 		{
 			"module_name": "File Manager",
@@ -52,7 +53,8 @@ def get_data():
 			"_doctype": 'Communication',
 			"icon": 'fa fa-envelope-o',
 			"color": '#589494',
-			"link": 'List/Communication/Inbox'
+			"link": 'List/Communication/Inbox',
+			"hidden": 1
 		},
 		{
 			"module_name": "Core",
