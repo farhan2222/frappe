@@ -133,8 +133,10 @@ def add_user_icon(_doctype, _report=None, label=None, link=None, type='link', st
 		else:
 			userdefined_icon = frappe.db.get_value('Report', _report, ['icon','color','module'], as_dict=True)
 
-		module_icon = frappe.get_value('Desktop Icon', {'standard':1, 'module_name':userdefined_icon.module},
-			['name', 'icon', 'color', 'reverse'], as_dict=True)
+		module_icon = None
+		if userdefined_icon:
+			module_icon = frappe.get_value('Desktop Icon', {'standard':1, 'module_name':userdefined_icon.module},
+				['name', 'icon', 'color', 'reverse'], as_dict=True)
 
 		if not module_icon:
 			module_icon = frappe._dict()
