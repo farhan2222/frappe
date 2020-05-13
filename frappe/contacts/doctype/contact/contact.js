@@ -44,6 +44,13 @@ frappe.ui.form.on("Contact", {
 				filters: {ignore_user_type: 1}
 			}
 		});
+		frm.set_query('item_group', 'item_groups_allowed', function() {
+			return {
+				filters: {
+					'show_in_website': 1
+				}
+			}
+		});
 		frm.refresh_field("links");
 	},
 	validate: function(frm) {
